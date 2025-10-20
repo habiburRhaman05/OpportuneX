@@ -1,0 +1,16 @@
+export const recruiterRoutes = {
+  register: "/recruiter/auth/register",
+  login: "/recruiter/auth/login",
+  profile: "/recruiter/auth/profile/me",
+  profileUpdate: "/recruiter/auth/profile/update",
+  logout: "/recruiter/auth/logout",
+  changePassword: "/recruiter/auth/change-password",
+  deleteAccount: "/recruiter/auth/security/delete-account",
+  verifyOtp: "/recruiter/auth/verify-otp",
+  onboardingVerifyOtp: "/recruiter/auth/verify-otp",
+  resendOtp: "/recruiter/auth/resend-otp",
+  onboardingCompany: "/recruiter/auth/onboarding/company",
+  postedJobs: "/recruiter/dashboard/posted-jobs",
+  overview: "/recruiter/dashboard/overview",
+  recruiterProfile: "/recruiter/dashboard/profile",
+};

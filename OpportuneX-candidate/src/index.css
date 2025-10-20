@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Dark-first design system - zinc-950 based */
+    --background: 240 10% 3.9%; /* zinc-950 */
+    --foreground: 0 0% 98%; /* zinc-50 */
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 221 83% 53%; /* emerald-500 */
+    --primary-foreground: 270 10% 3.9%;
+
+    --secondary: 240 3.7% 15.9%; /* zinc-800 */
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 5.9% 10%; /* zinc-900 */
+    --muted-foreground: 240 5% 64.9%; /* zinc-400 */
+
+    --accent: 240 3.7% 15.9%; /* zinc-800 */
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%; /* red-500 */
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%; /* zinc-800 */
+    --input: 240 3.7% 15.9%;
+    --ring: 142 76% 36%; /* emerald-500 */
+
+    --radius: 0.75rem;
+
+    --shadow-glow: 0 0 40px hsl(142 76% 36% / 0.3);
+    --shadow-elegant: 0 10px 30px -10px hsl(0 0% 0% / 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

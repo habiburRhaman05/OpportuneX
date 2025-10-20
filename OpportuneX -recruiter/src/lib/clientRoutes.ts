@@ -1,0 +1,17 @@
+export const routes = {
+  overview_page: "/recruiter/dashboard/overview",
+  posted_jobs_page: "/recruiter/dashboard/posted-jobs",
+  post_new_job_page: "/recruiter/dashboard/post-new-job",
+  profile_page: "/recruiter/dashboard/profile",
+  companyProfile: "/recruiter/dashboard/company-profile",
+  profile_edit_personal_page: "/recruiter/dashboard/profile/edit/personal",
+  profile_edit_company_page: "/recruiter/dashboard/profile/edit/company",
+  account_info_page: "/recruiter/dashboard/account-settings/account-info",
+  change_password_page: "/recruiter/dashboard/account-settings/change-password",
+  secruity_page: "/recruiter/dashboard/account-settings/secruity",
+  login_page: "/recruiter/auth/login",
+  register_page: "/recruiter/auth/onboarding/register",
+  email_verification_page: "/recruiter/auth/onboarding/email-verification",
+  company_page: "/recruiter/auth/onboarding/company",
+  welcome_page_page: "/recruiter/auth/onboarding/welcome",
+};
