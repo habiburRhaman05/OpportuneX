@@ -13,9 +13,11 @@ exports.sendCookie = async (res, cookieName, token) => {
         maxAge: 1000 * 60 * 30, // ✅ 2 minutes in milliseconds (not seconds)
       }
     );
+
+
     return true;
   } catch (error) {
-    logger.error(error.message);
+  
 
     throw new ErrorHandler("failed to sending cookice", 400);
   }
