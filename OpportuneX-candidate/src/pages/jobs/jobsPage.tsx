@@ -19,7 +19,6 @@ import { useApiQuery } from "@/hooks/useApi";
 import { cn } from "@/lib/utils";
 import { FilterIcon, XIcon } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import AutoCompleteSearchBar from "./../../../../OpportuneX -recruiter/src/components/AutoCompleteBar";
 
 const Jobs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -123,14 +122,14 @@ const Jobs = () => {
             {/* Search and Filters Bar */}
             <div className="flex flex-col md:flex-row gap-3 items-center">
               <div className="relative flex-grow w-full">
-                <AutoCompleteSearchBar
+                {/* <AutoCompleteSearchBar
                   key={"search"}
                   url={"/job/search"}
                   //   placeholder="Search for jobs, companies, or technologies..."
                   value={searchTerm}
                   className="w-full"
                   handleSelect={handleSelect}
-                />
+                /> */}
               </div>
 
               <div className="flex gap-2 w-full md:w-auto justify-end">

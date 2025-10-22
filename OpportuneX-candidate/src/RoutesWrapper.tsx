@@ -31,6 +31,10 @@ import OnboardingPage from "./pages/onboarding/profile-info";
 import AppliedJobsPage from "./pages/applied-jobs-page/applied-applications-page";
 import ApplicationDetails from "./pages/applied-jobs-page/application-details";
 import AbortControllerDemo from "./components/shared/AbortController";
+import React from "react";
+import ResetPasswordPage from "./pages/reset-password/reset-password";
+import ForgetPassword from "./pages/forgot-password/forgot-password";
+import CheckToken from "./pages/check-token/check-token";
 
 const RoutesWrapper = () => {
   return (
@@ -131,7 +135,11 @@ const RoutesWrapper = () => {
             />
           </Route>
         </Route>
+        {/*reset password route*/}
 
+        <Route path="/forgot-password" element={<ForgetPassword />} />
+        <Route path="/check-token/:token" element={<CheckToken />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
