@@ -14,19 +14,19 @@ exports.uploadFile = async (req, res) => {
     if (!file) return res.status(400).json({ error: "No file uploaded" });
 
     // Prepare form-data
-    // const form = new FormData();
-    // form.append("file", fs.createReadStream(file.path), file.originalname);
+    const form = new FormData();
+    form.append("file", fs.createReadStream(file.path), file.originalname);
 
     // Upload to Cloudinary
-    // const result = await cloudinary.uploader.upload(file.path, {
-    //   folder: "react_uploads",
-    // });
+    const result = await cloudinary.uploader.upload(file.path, {
+      folder: "react_uploads",
+    });
 
     // Delete temp file
-    // fs.unlinkSync(file.path);
+    fs.unlinkSync(file.path);
    res.json({
       message: "File uploaded successfully",
-     data:{ url: "http://localhost:8080/avatar-placeholder.png" || result.secure_url,
+     data:{ url: result.secure_url,
      }// cloudinaryId: result.public_id,
     }).status(200)
   } catch (err) {

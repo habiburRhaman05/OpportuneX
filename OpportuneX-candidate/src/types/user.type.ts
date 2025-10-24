@@ -20,7 +20,7 @@ export interface User {
     github?: string;
     twitter?: string;
   };
-  workExperiences: Experience[];
+  workExperience: Experience[];
   appliedJobs: Experience[];
   education: [];
   savedJobs: SavedJob[];

@@ -150,17 +150,19 @@ export default function WorkExperience() {
                 className="border border-zinc-700 rounded-lg p-4 space-y-4"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-zinc-700 rounded-lg flex items-center justify-center">
-                      <Building2 className="h-6 w-6 text-zinc-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-white">
-                        {exp.position || "Software Engineer"}
-                      </h4>
-                      <p className="text-sm text-zinc-400">
-                        {exp.company || "Company Name"}
-                      </p>
+                  <div className="flex items-center ">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-zinc-700 rounded-lg flex items-center justify-center">
+                        <Building2 className="h-6 w-6 text-zinc-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white">
+                          {exp.position || "Software Engineer"}
+                        </h4>
+                        <p className="text-sm text-zinc-400">
+                          {exp.company || "Company Name"}
+                        </p>
+                      </div>
                     </div>
                   </div>
                   {formData.workExperience.length > 1 && (

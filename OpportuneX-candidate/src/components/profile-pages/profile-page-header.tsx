@@ -53,15 +53,7 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
                   )}
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors duration-200">
-                <Phone className="w-4 h-4" />
-                <span>
-                  {" "}
-                  {profile?.phone || (
-                    <span className="text-red-600">Not Set</span>
-                  )}
-                </span>
-              </div>
+
               <div className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors duration-200">
                 <MapPin className="w-4 h-4" />
                 <span>

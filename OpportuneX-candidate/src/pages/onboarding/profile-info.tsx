@@ -126,14 +126,14 @@ export default function OnboardingPage() {
     }
 
     // Validate work experience
-    formData.workExperience.forEach((exp, index) => {
-      if (!exp.company.trim())
-        newErrors[`workExp_${exp.id}_company`] = "Company name is required";
-      if (!exp.position.trim())
-        newErrors[`workExp_${exp.id}_position`] = "Position is required";
-      if (!exp.duration.trim())
-        newErrors[`workExp_${exp.id}_duration`] = "Duration is required";
-    });
+    // formData.workExperience.forEach((exp, index) => {
+    //   if (!exp.company.trim())
+    //     newErrors[`workExp_${exp.id}_company`] = "Company name is required";
+    //   if (!exp.position.trim())
+    //     newErrors[`workExp_${exp.id}_position`] = "Position is required";
+    //   if (!exp.duration.trim())
+    //     newErrors[`workExp_${exp.id}_duration`] = "Duration is required";
+    // });
 
     // Validate education
     formData.education.forEach((edu, index) => {
@@ -275,7 +275,17 @@ export default function OnboardingPage() {
       });
       return;
     }
-    await onboardingHandler.mutateAsync(formData);
+
+    const payload = {
+      ...formData,
+    };
+
+    payload.workExperience.forEach((exp, index) => {
+      if (!exp.company.trim()) delete payload.workExperience;
+      if (!exp.position.trim()) delete payload.workExperience;
+      if (!exp.duration.trim()) delete payload.workExperience;
+    });
+    await onboardingHandler.mutateAsync(payload);
     navigate("/onboarding/welcome");
   };
   useEffect(() => {

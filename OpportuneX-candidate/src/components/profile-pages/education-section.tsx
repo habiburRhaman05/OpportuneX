@@ -37,6 +37,7 @@ const EducationSection = ({ educations }: EducationSectionProps) => {
                       {edu.institution}
                     </p>
                     <p>{edu.field}</p>
+                    <p>GPA : {edu.gpa}</p>
                     <p>{edu.duration}</p>
                   </div>
                 </div>

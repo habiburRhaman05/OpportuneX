@@ -4,12 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser } from "@/context/AuthContext";
 import useAuth from "@/hooks/useAuth";
-import { AlertCircle, GraduationCap, Plus, X } from "lucide-react";
+import { AlertCircle, GraduationCap, Loader, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function EducationEditForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { user } = useUser();
+  const { profileUpdateMutation } = useAuth();
 
   const [formData, setFormData] = useState({
     education: [
@@ -37,6 +38,9 @@ export default function EducationEditForm() {
         newErrors[`edu_${edu.id}_degree`] = "Degree is required";
       if (!edu.field.trim())
         newErrors[`edu_${edu.id}_field`] = "Field of study is required";
+      if (!edu.duration.trim())
+        newErrors[`edu_${edu.id}_duration`] = "Duration is required";
+      if (!edu.gpa.trim()) newErrors[`edu_${edu.id}_gpa`] = "GPA is required";
     });
 
     setErrors(newErrors);
@@ -86,7 +90,7 @@ export default function EducationEditForm() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) {
       // Scroll to first error
       const firstErrorKey = Object.keys(errors)[0];
@@ -100,7 +104,13 @@ export default function EducationEditForm() {
       });
       return;
     }
-    console.log("Profile data:", formData);
+
+    const payload = formData.education.map((item) => {
+      const { id, ...others } = item;
+      return others;
+    });
+
+    await profileUpdateMutation.mutateAsync({ education: payload });
   };
 
   useEffect(() => {
@@ -201,7 +211,7 @@ export default function EducationEditForm() {
                   <div>
                     <Label>Field of Study*</Label>
                     <Input
-                      value={edu.fieldOfStudy}
+                      value={edu.field}
                       onChange={(e) =>
                         updateEducation(edu.id, "field", e.target.value)
                       }
@@ -220,15 +230,38 @@ export default function EducationEditForm() {
                     )}
                   </div>
                   <div>
-                    <Label>Start Date </Label>
+                    <Label>Duration (2020-2024) </Label>
                     <Input
-                      value={edu.startDate}
+                      value={edu.duration}
                       onChange={(e) =>
                         updateEducation(edu.id, "duration", e.target.value)
                       }
                       className="bg-zinc-800/80 border-zinc-700 text-white focus:bg-zinc-800 focus:border-blue-500 transition-colors"
                       placeholder="2018 - 2022"
                     />
+                    {errors[`edu_${edu.id}_duration`] && (
+                      <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {errors[`edu_${edu.id}_duration`]}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label>GPA (5.00) </Label>
+                    <Input
+                      value={edu.gpa}
+                      onChange={(e) =>
+                        updateEducation(edu.id, "gpa", e.target.value)
+                      }
+                      className="bg-zinc-800/80 border-zinc-700 text-white focus:bg-zinc-800 focus:border-blue-500 transition-colors"
+                      placeholder="2018 - 2022"
+                    />
+                    {errors[`edu_${edu.id}_gpa`] && (
+                      <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {errors[`edu_${edu.id}_gpa`]}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -249,6 +282,9 @@ export default function EducationEditForm() {
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2"
             >
               Save Changes
+              {profileUpdateMutation.isPending && (
+                <Loader className="animate-spin ml-3" />
+              )}
             </Button>
           </div>
         </Card>
