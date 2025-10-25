@@ -1,8 +1,10 @@
+const Candidate = require("../models/candidate");
 
 
 
-async function getAllUser() {
-  // return await User.find();
+exports.getUserById = async  (id)  =>{
+ const candidate = await Candidate.findById(id).select("-password -emailOtp ");
+  return  candidate
 }
 
 

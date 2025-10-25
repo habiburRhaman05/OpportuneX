@@ -1,16 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import { Upload, FileText, X, Loader, Eye, Loader2 } from "lucide-react";
-import { useFileUpload } from "@/hooks/useFileUplaod";
-
-import useAuth from "@/hooks/useAuth";
-import { Dialog, DialogClose, DialogContent } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { useApiMutation } from "@/hooks/useApi";
-import { queryClient } from "@/App";
+import { useUser } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { useApiMutation } from "@/hooks/useApi";
+import { useFileUpload } from "@/hooks/useFileUplaod";
+import { FileText, Loader2, Upload, X } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Dialog, DialogContent } from "../ui/dialog";
+import { Label } from "../ui/label";
 
 const ResumeForm = () => {
   const [resumeUrl, setResumeUrl] = useState("");
@@ -20,7 +17,8 @@ const ResumeForm = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadHandler = useFileUpload();
 
-  const { user, reValidateData } = useAuth();
+  const { user } = useUser();
+
   const { uploadFile, loading } = useFileUpload();
   const submitMutation = useApiMutation({
     url: "/candidate/auth/profile/update",
@@ -28,7 +26,6 @@ const ResumeForm = () => {
     onSuccess: (data) => {
       setResumeUrl(previewUrl);
       setPreviewUrl("");
-      reValidateData();
       toast({
         title: "Profile updated",
         description: "Your company profile has been updated successfully.",
@@ -47,7 +44,6 @@ const ResumeForm = () => {
     onSuccess: (data) => {
       setResumeUrl("");
       setPreviewUrl("");
-      reValidateData();
 
       toast({
         title: "Profile updated",
@@ -77,7 +73,8 @@ const ResumeForm = () => {
 
     setErrors(null);
     const result = await uploadFile(e.target.files[0], "/upload-file");
-    setPreviewUrl(result);
+    const image = result;
+    setPreviewUrl(image);
   };
 
   // Remove selected file
@@ -87,7 +84,7 @@ const ResumeForm = () => {
 
   // Save handler
   const handleSave = async () => {
-    await submitMutation.mutateAsync({ resumeUrl });
+    await submitMutation.mutateAsync({ resumeUrl: previewUrl });
   };
 
   const handleDeleteResume = async () => {
@@ -96,7 +93,7 @@ const ResumeForm = () => {
 
   useEffect(() => {
     setResumeUrl(user?.data.resumeUrl || "");
-  }, [user, reValidateData]);
+  }, [user]);
 
   return (
     <Card className="bg-zinc-900/50 border-zinc-800">

@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Lock, Eye, EyeOff, Shield } from "lucide-react";
+import { Lock, Eye, EyeOff, Shield, Loader } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
 
@@ -25,7 +25,7 @@ export function ChangePasswordTab() {
     confirm: false,
   });
   const { toast } = useToast();
-  const { changePasswordMutation, changePasswordStatus } = useAuth();
+  const { changePasswordMutation } = useAuth();
 
   const handlePasswordChange = (field: string, value: string) => {
     setPasswords((prev) => ({ ...prev, [field]: value }));
@@ -68,7 +68,7 @@ export function ChangePasswordTab() {
   const passwordStrength = getPasswordStrength(passwords.new);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 pb-20">
       <div>
         <h3 className="text-lg font-semibold">Change Password</h3>
         <p className="text-sm text-muted-foreground">
@@ -238,10 +238,13 @@ export function ChangePasswordTab() {
         <Button
           onClick={handleSubmit}
           disabled={!passwords.current || !passwords.new || !passwords.confirm}
-          className="bg-primary hover:bg-primary/90"
+          className="bg-primary text-white hover:bg-primary/90"
         >
           <Shield className="h-4 w-4 mr-2" />
           Update Password
+          {changePasswordMutation.isPending && (
+            <Loader className="h-5 w-5 ml-3 animate-spin" />
+          )}
         </Button>
       </div>
     </div>

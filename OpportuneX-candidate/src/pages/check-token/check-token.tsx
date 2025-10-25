@@ -1,58 +1,44 @@
+import { useApiMutation } from "@/hooks/useApi";
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 
 const CheckToken = () => {
-  const [status, setStatus] = useState("loading"); // loading | success | fail
   const [message, setMessage] = useState("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const token = useParams().token;
+
+  const verifyMutation = useApiMutation({
+    url: `/candidate/auth/verify-forgot-password-token/${token}`,
+    method: "post",
+  });
+
   useEffect(() => {
     if (!token) {
       alert("no token found");
-      setStatus("fail");
+
       setMessage("Invalid or missing token.");
       return;
     }
 
     // Simulate async backend call with dummy delay
     const verifyToken = async () => {
-      setStatus("loading");
-      setMessage("");
-      try {
-        // ⏳ Simulate server verification delay
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        navigate(`/reset-password/${token}`, {
-          replace: true, // prevents back navigation confusion
-        });
-        // Mock token check logic (replace with real API call)
-        const isValid = token.startsWith("TOKEN"); // fake check for demo
-
-        // if (true) {
-
-        //   // ✅ Token valid → redirect to reset-password
-        //   navigate(`/reset-password?code=${encodeURIComponent(token)}`, {
-        //     replace: true, // prevents back navigation confusion
-        //   });
-        // } else {
-        //   // ❌ Token invalid or expired
-        //   setStatus("fail");
-        //   setMessage(
-        //     "Token expired or invalid. Please request a new reset link."
-        //   );
-        // }
-      } catch (err) {
-        setStatus("fail");
-        setMessage("Failed to verify token. Please try again.");
-      }
+      await verifyMutation.mutateAsync({});
     };
 
     verifyToken();
   }, [token, navigate]);
 
+  // ✅ Success UI
+  if (verifyMutation.isSuccess) {
+    // Redirect to reset password page with token
+    navigate(`/reset-password/${token}`, { replace: true });
+    return null; // We don't render anything as we are redirecting
+  }
+
   // 🌀 Loading UI
-  if (status === "loading") {
+  if (verifyMutation.isPending) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
         <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -62,7 +48,7 @@ const CheckToken = () => {
   }
 
   // ❌ Fail UI
-  if (status === "fail") {
+  if (verifyMutation.isError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
         <div className="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md text-center">

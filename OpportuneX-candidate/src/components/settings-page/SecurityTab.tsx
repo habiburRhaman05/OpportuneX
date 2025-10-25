@@ -62,7 +62,7 @@ export function SecuityTab() {
   });
 
   const handleDeleteAccount = async () => {
-    await deleteAccountMutation.mutateAsync({ userId: user.data._id });
+    await deleteAccountMutation.mutateAsync({ currentPassword: password });
   };
 
   return (

@@ -3,41 +3,63 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
+import { useApiMutation } from "@/hooks/useApi";
+import { candidatesRoutes } from "@/api/endpoints/routes";
 
-// Zod schema for validation
+/**
+ * ✅ Zod Schema Validation
+ * English: Ensures email is valid format.
+ * বাংলা: এই স্কিমা ইমেইল ফরম্যাট সঠিক আছে কিনা যাচাই করে।
+ */
 const resetPasswordSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
 });
 
-const ForgetPassword = () => {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [sentEmail, setSentEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
+const ForgetPassword: React.FC = () => {
+  const [sentEmail, setSentEmail] = useState<string | null>(null);
+
+  // ✅ React Hook Form Setup
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const onSubmit = (data) => {
-    setIsLoading(true); // start loading
-    setSentEmail(data.email); // store email
-    // Simulate email sending
-    setTimeout(() => {
-      setIsLoading(false); // stop loading
-      setIsSuccess(true); // show success UI
-    }, 1500);
+  /**
+   * ✅ useApiMutation for async API request
+   * English: Custom hook that manages API call state (loading, success, error)
+   * বাংলা: এই হুকটি API রিকোয়েস্টের স্টেট (লোডিং, সফল, ব্যর্থ) ম্যানেজ করে।
+   */
+  const forgotPasswordMutation = useApiMutation({
+    url: candidatesRoutes.forgotPassword,
+    method: "post",
+  });
+
+  /**
+   * ✅ Submit handler
+   * English: Sends email to API and stores it in state on success.
+   * বাংলা: ইমেইল API তে পাঠায় এবং সফল হলে সেটি স্টেটে সংরক্ষণ করে।
+   */
+  const onSubmit = async (data: ResetPasswordFormData) => {
+    try {
+      await forgotPasswordMutation.mutateAsync({ email: data.email });
+      setSentEmail(data.email);
+    } catch (error) {
+      console.error("Password reset failed:", error);
+    }
   };
 
-  if (isSuccess) {
+  // ✅ If success, show success card
+  if (forgotPasswordMutation.isSuccess && sentEmail) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
         <div className="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md text-center">
           <div className="flex flex-col items-center">
-            {/* Success icon */}
+            {/* ✅ Success Icon */}
             <svg
               className="w-16 h-16 text-green-500 mb-4"
               fill="none"
@@ -51,11 +73,13 @@ const ForgetPassword = () => {
                 d="M5 13l4 4L19 7"
               />
             </svg>
+
             <h2 className="text-2xl font-bold text-white mb-2">
               Email Sent Successfully!
             </h2>
             <p className="text-gray-300 mb-2">Reset link has been sent to:</p>
             <p className="text-blue-400 font-semibold mb-6">{sentEmail}</p>
+
             <Link
               target="_blank"
               to="https://mail.google.com/"
@@ -69,6 +93,7 @@ const ForgetPassword = () => {
     );
   }
 
+  // ✅ Default form UI
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
       <div className="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md">
@@ -78,7 +103,8 @@ const ForgetPassword = () => {
         <p className="text-gray-300 mb-6 text-center">
           Enter your email to receive a password reset link
         </p>
-        <form onSubmit={handleSubmit(onSubmit)}>
+
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <label className="block text-gray-200 mb-2">Email Address</label>
           <input
             type="email"
@@ -89,17 +115,26 @@ const ForgetPassword = () => {
                 ? "focus:ring-red-500 border border-red-500"
                 : "focus:ring-blue-500"
             }`}
-            disabled={isLoading}
+            disabled={forgotPasswordMutation.isPending}
           />
+
           {errors.email && (
             <p className="text-red-500 text-sm mb-4">{errors.email.message}</p>
           )}
+
+          {forgotPasswordMutation.isError && (
+            <p className="text-red-500 text-sm mb-4">
+              {(forgotPasswordMutation.error as any)?.message ||
+                "Failed to send reset link. Try again."}
+            </p>
+          )}
+
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={forgotPasswordMutation.isPending}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition-colors flex items-center justify-center gap-2"
           >
-            {isLoading && (
+            {forgotPasswordMutation.isPending && (
               <svg
                 className="w-5 h-5 animate-spin text-white"
                 xmlns="http://www.w3.org/2000/svg"
@@ -121,9 +156,10 @@ const ForgetPassword = () => {
                 ></path>
               </svg>
             )}
-            {isLoading ? "Sending..." : "Next"}
+            {forgotPasswordMutation.isPending ? "Sending..." : "Next"}
           </button>
         </form>
+
         <p className="text-gray-400 text-sm mt-4 text-center">
           Remembered your password?{" "}
           <Link to="/auth/login" className="text-blue-500 hover:underline">

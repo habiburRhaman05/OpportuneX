@@ -2,6 +2,10 @@
 const express = require('express');
 const { dbConnect } = require('./config/Database');
 const { appConfig } = require('./config/AppConfig');
+const { connection } = require('./config/redis');
+
+const { sendVerificationMail } = require("./services/mailServices");
+const Candidate = require('./models/candidate');
 
 const startServer = async () => {
   // server app instance
@@ -9,7 +13,14 @@ const startServer = async () => {
   // database connection
   await dbConnect();
   // App Default Config
+  // try {
+  //   const result = await Candidate.deleteMany({});
+  //   console.log(`Deleted ${result.deletedCount} users`);
+  // } catch (err) {
+  //   console.error('Error deleting users:', err);
+  // }
   await appConfig(app);
+
 };
 startServer();
 

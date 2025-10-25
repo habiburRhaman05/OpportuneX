@@ -1,13 +1,25 @@
+
+require('dotenv').config();
+
 const nodemailer = require('nodemailer');
 
-console.log(process.env.SMTP_USER, 'asdadd');
+
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  post:  process.env.SMTP_PORT,
+  service: 'gmail',
   auth: {
-    user:  process.env.SMPT_USER,
-    pass: process.env.SMTP_PASSWPRD
+    user:process.env.FORM_EMAIL,
+    pass: process.env.GMAIL_APP_PASSWORD // App Password
   },
 });
+
+
+transporter.verify(function(error, success) {
+  if (error) {
+    console.error('SMTP Connection Error:', error);
+  } else {
+    console.log('Server is ready to send emails');
+  }
+});
+
 
 module.exports = { transporter };

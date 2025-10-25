@@ -93,3 +93,4 @@
  2025-10-11 06:35:55 [ERROR]: Operation `recruiters.findOne()` buffering timed out after 10000ms
  2025-10-11 06:42:51 [ERROR]: Operation `recruiters.findOne()` buffering timed out after 10000ms
  2025-10-11 06:43:03 [ERROR]: Operation `recruiters.findOne()` buffering timed out after 10000ms
+ 2025-10-25 17:42:45 [ERROR]: secretOrPrivateKey must have a value

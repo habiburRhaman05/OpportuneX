@@ -5,7 +5,7 @@ const ErrorHandler = require('./errorHandler');
 // Get the Token
 
 const generateTokens = async (user,expire, secret) => {
-  console.log("secreet",secret);
+
   
   try {
     let token = await jwt.sign(

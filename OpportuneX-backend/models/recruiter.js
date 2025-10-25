@@ -60,6 +60,7 @@ const recruiterSchema = new mongoose.Schema(
       type: String,
       deafult: "recruiter",
     },
+ 
   },
   { timestamps: true }
 );

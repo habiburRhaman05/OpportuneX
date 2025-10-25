@@ -1,3 +1,4 @@
+
 const helmet = require("helmet");
 const recruiterRoutes = require("../routes/recruiterRoutes")
 const companyRoutes = require("../routes/companyRoutes")
@@ -12,6 +13,7 @@ const multer = require("multer");
 const { uploadFile } = require("../controllers/uploadFile");
 const jobRoutes = require("../routes/jobRoutes");
 const { delay } = require("../utils/delay");
+const { connection } = require("../workers/emailWorkers");
 exports.appConfig = async (app) => {
   const port = process.env.PORT || 5500;
   const upload = multer({ dest: "uploads/" });
@@ -57,7 +59,9 @@ exports.appConfig = async (app) => {
      })
   })
   app.use(errorHandler);
+
   app.post("/api/v1/upload-file", upload.single("file"), uploadFile);
+   
   app.listen(port, () => {
     console.log(`🚀 REST: http://localhost:${port}`);
   });

@@ -5,6 +5,7 @@ export const candidatesRoutes = {
   profileUpdate: "/candidate/auth/profile/update",
   logout: "/candidate/auth/logout",
   changePassword: "/candidate/auth/change-password",
+  forgotPassword: "/candidate/auth/forgot-password",
   deleteAccount: "/candidate/auth/security/delete-account",
   verifyOtp: "/candidate/auth/onboarding/verify-otp",
   onboardingVerifyOtp: "/candidate/auth/onboarding/email-verify",

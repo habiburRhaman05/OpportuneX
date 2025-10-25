@@ -45,6 +45,7 @@ const CandidateRegisterPage = () => {
       email: data.email,
       password: data.password,
       fullName: data.fullName,
+      role: "candidate",
     });
   };
 

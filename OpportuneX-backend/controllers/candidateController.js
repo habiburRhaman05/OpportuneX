@@ -1,11 +1,17 @@
-const bcrypt = require("bcryptjs");
+
 const Candidate = require("../models/candidate");
-const { generateTokens } = require("../utils/authHandler");
-const { sendVerificationMail } = require("../services/mailServices");
+const { generateTokens, generateDecodedToken } = require("../utils/authHandler");
+const {
+  sendVerificationMail,
+  sendForgetPasswordLink,
+} = require("../services/mailServices");
 const { generateOTP } = require("../utils/generateOtp");
 const { comparePassword } = require("../utils/hashPassword");
 const ErrorHandler = require("../utils/errorHandler");
 const { delay } = require("../utils/delay");
+const { emailQueue } = require("../queue/emailQueue");
+const { getUserById } = require("../services/authservices");
+const bcrypt = require("bcryptjs");
 const profileData = {
   _id: "afsgsgg",
   fullName: "Habibur Rhaman",
@@ -117,10 +123,9 @@ exports.registerCandidate = async (req, res, next) => {
       email,
       password: hashedPassword,
       role,
-
     });
 
-      //  const otp = await sendVerificationMail(candidate)
+    //  const otp = await sendVerificationMail(candidate)
     // candidate.emailOtp = generateOTP();
     // candidate.otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
     // candidate.onboardingSteps.emailVerification = true
@@ -130,6 +135,8 @@ exports.registerCandidate = async (req, res, next) => {
       "5m",
       process.env.AUTH_JWT_SECRIT
     );
+
+    await emailQueue.add("welcomeEmail", candidate);
 
     res.cookie("accessToken", token, {
       httpOnly: true,
@@ -153,6 +160,8 @@ exports.registerCandidate = async (req, res, next) => {
  * 📌 Login
  */
 exports.loginCandidate = async (req, res, next) => {
+  console.log("loging");
+
   const { email, password, role } = req.body;
   try {
     // Service Function to find data from email or username
@@ -197,11 +206,11 @@ exports.loginCandidate = async (req, res, next) => {
 exports.logoutController = async (req, res, next) => {
   const id = req.user?.id;
   try {
-    const user = await Candidate.findById(id)
+    const user = await Candidate.findById(id);
 
     // if user is not exist
     if (!user) {
-      throw new ErrorHandler('User with id not found!');
+      throw new ErrorHandler("User with id not found!");
     }
     // clearing the cookie
     res.clearCookie("accessToken", {
@@ -228,9 +237,9 @@ exports.logoutController = async (req, res, next) => {
  * 📌 Get Candidate Profile (Protected)
  */
 exports.getCandidateProfile = async (req, res) => {
-
   try {
-    const candidate = await Candidate.findById(req.user.id).select("-password")
+    const candidate = await getUserById(req.user.id);
+
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
     }
@@ -296,16 +305,16 @@ exports.changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
 
-    // const candidate = await Candidate.findById(req.user._id);
-    // if (!candidate)
-    //   return res.status(404).json({ message: "Candidate not found" });
+    const candidate = await Candidate.findById(req.user.id);
+    if (!candidate)
+      return res.status(404).json({ message: "Candidate not found" });
 
-    // const isMatch = await bcrypt.compare(oldPassword, candidate.password);
-    // if (!isMatch)
-    //   return res.status(400).json({ message: "Old password is incorrect" });
+    const isMatch = await bcrypt.compare(oldPassword, candidate.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Old password is incorrect" });
 
-    // candidate.password = await bcrypt.hash(newPassword, 10);
-    // await candidate.save();
+    candidate.password = await bcrypt.hash(newPassword, 10);
+    await candidate.save();
 
     res.json({ message: "Password updated successfully" });
   } catch (err) {
@@ -318,7 +327,16 @@ exports.changePassword = async (req, res) => {
  */
 exports.deleteCandidate = async (req, res) => {
   try {
-    // await Candidate.findByIdAndDelete(req.user._id);
+    const { currentPassword } = req.body;
+    const candidate = await Candidate.findById(req.user.id);
+    if (!candidate)
+      return res.status(404).json({ message: "Candidate not found" });
+    const isMatch = await bcrypt.compare(currentPassword, candidate.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Your password is incorrect" });
+
+    await Candidate.findByIdAndDelete(req.user.id);
+
     res.clearCookie("accessToken", {
       httpOnly: true,
       secure: false,
@@ -340,18 +358,11 @@ exports.resendOtp = async (req, res) => {
     const candidate = await Candidate.findOne({ email });
     if (!candidate) return res.status(404).json({ message: "User not found" });
 
-    // Generate new OTP
-    const otp = generateOTP(); // 6-digit OTP
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000).getTime() // 5 minutes
-
-    candidate.emailOtp = otp;
-    candidate.otpExpiresAt = otpExpires;
-    await candidate.save();
 
     // Send OTP
-    // await sendOtp(candidate.email, otp);
+    await emailQueue.add("resendOtp", candidate);
 
-    res.json({success:true, message: "OTP sent successfully" });
+    res.json({ success: true, message: "OTP sent successfully" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -385,11 +396,9 @@ exports.verifyOtp = async (req, res) => {
     // Mark verified
     candidate.emailOtp = null;
     candidate.otpExpiresAt = null;
-    candidate.onboardingSteps.emailVerification = true
+    candidate.onboardingSteps.emailVerification = true;
     await candidate.save();
 
-
-    
     // if (profileData.emailOtp != otp) {
     //   return res.status(400).json({ message: "Invalid OTP" });
     // }
@@ -416,7 +425,7 @@ exports.verifyOtp = async (req, res) => {
 exports.updateProfileInfo = async (req, res) => {
   try {
     const updates = req.body;
-console.log(updates);
+    console.log(updates);
 
     const candidate = await Candidate.findByIdAndUpdate(req.user.id, updates, {
       new: true,
@@ -479,5 +488,71 @@ exports.refreshToken = async (req, res) => {
     res.json({ success: true, message: "Token refresh" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+//  forgot password
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const candidate = await Candidate.findOne({ email });
+    if (!candidate) return res.status(404).json({ message: "User not found" });
+
+    // send forgot password email
+
+    await emailQueue.add("forgotPassword", candidate);
+
+    return res.status(200).json({ message: "email send ok" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+
+  }
+};
+// verify token
+exports.verifyForgotToken = async (req, res) => {
+  const { token } = req.params;
+  try {
+ 
+      const { err, decoded } = await generateDecodedToken(token, process.env.RESET_SECRET);
+        if (err) {
+          throw new ErrorHandler('Token_Invalid_or_Expire', 401);
+        }
+    return res.status(200).json({ success: true, message: "Token validated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+
+  }
+};
+
+
+exports.resetPassword = async (req, res,next) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    // Verify JWT
+  const { err, decoded } = await generateDecodedToken(token, process.env.RESET_SECRET);
+        if (err) {
+        next(err)
+         
+        }
+
+
+    const user = await getUserById(decoded.data.id);
+
+    
+    if (!user)
+      return res.status(404).json({ success: false, message: "User not found." });
+
+    // Update password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    await user.save();
+
+    res.json({ success: true, message: "Password updated successfully." });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+
   }
 };
