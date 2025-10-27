@@ -237,6 +237,28 @@ exports.getAllAppledJobs = async (req, res, next) => {
 // recruiter 
 
 
+exports.getAllCreatedJobs = async (req, res, next) => {
+  try {
+    const companyId = req.params.companyId;
+    const page = parseInt(req.query.page) || 1;
+  const status = parseInt(req.query.status) || "full-time"
+    const jobType = parseInt(req.query.jobType) || "all"
+     const limit = parseInt(req.query.limit) || 10;
+ 
+     const skip = (page - 1) * limit;
+    const jobs = await Job.find({ company: companyId }).skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+
+    res.status(200).json({ success: true, jobs });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+
 exports.getAllApplication = async (req, res, next) => {
   try {
   
@@ -393,8 +415,6 @@ exports.savedJob = async (req, res, next) => {
 exports.selectApplications = async (req, res, next) => {
  
   try {
-  
-
     res.status(201).json({ success: true ,message:"Candidates Selected Successfully"});
   } catch (err) {
     next(err);
@@ -404,8 +424,6 @@ exports.selectApplications = async (req, res, next) => {
 exports.rejectApplications = async (req, res, next) => {
  
   try {
-  
-
     res.status(201).json({ success: true ,message:"Candidates Rejected Successfully"});
   } catch (err) {
     next(err);

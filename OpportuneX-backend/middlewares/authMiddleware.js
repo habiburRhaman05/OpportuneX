@@ -23,7 +23,7 @@ exports.authenticatedRoutes = async (req, res, next) => {
 
 
     // verify the incoming refresh token requred token and secret key
-    const { err, decoded } = await generateDecodedToken(token, AUTH_JWT_SECRIT);
+    const { err, decoded } = await generateDecodedToken(token, process.env.AUTH_JWT_SECRIT);
     if (err) {
       throw new ErrorHandler('Token_Invalid_or_Expire', 401);
     }
@@ -35,8 +35,6 @@ exports.authenticatedRoutes = async (req, res, next) => {
 };
 
 exports.authorize = (roles) => {
-
-
   return (req, res, next) => {
     console.log(req.user);
     if (!roles.includes(req.user.role)) {

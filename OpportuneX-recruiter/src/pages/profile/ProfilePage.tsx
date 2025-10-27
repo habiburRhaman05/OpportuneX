@@ -220,8 +220,8 @@ export default function RecruiterProfilePublic() {
                     No location provided
                   </p>
                 )}
-                {socialLinks.linkedin ? (
-                  <p>Linkedin: {socialLinks.linkedin}</p>
+                {socialLinks?.linkedin ? (
+                  <p>Linkedin: {socialLinks?.linkedin}</p>
                 ) : (
                   <p className="text-sm italic text-muted-foreground">
                     No location provided

@@ -45,12 +45,6 @@ const companySchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    recruiters: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Recruiter", // List of recruiters in this company
-      },
-    ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Recruiter", // Who created the company entry

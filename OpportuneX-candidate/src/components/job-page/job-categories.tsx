@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const JobCategoriesList = () => {
-  const { data: jobData, isLoading } = useApiQuery({
+  const { data: jobData, isLoading } = useApiQuery<{ data: any }>({
     url: "/job/categories",
     queryKey: ["fetch-job-cattegories"],
     enabled: true,

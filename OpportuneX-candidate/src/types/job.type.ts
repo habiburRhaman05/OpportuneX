@@ -1,27 +1,29 @@
-import { Education, Experience } from "./user.type";
+export interface Job {
+  _id: string; // Unique job identifier
+  title: string; // Job title (e.g., Frontend Developer)
+  location: string; // Job location (e.g., San Francisco, CA)
+  description: string; // Job description text
 
-export type Job = {
-  _id: string;
-  title: string;
-  location: string;
-  description: string;
   responsibility: {
-    title: string;
-    list: string[];
+    title: string; // Section title (e.g., "Key Responsibilities")
+    list: string[]; // List of responsibilities
   };
-  status: string;
+
+  status: "open" | "closed"; // Job status
   requirements: {
-    education: Education[];
-    experience: Experience[];
-    skills: string[];
+    education: string; // Required education
+    experience: string; // Required experience
+    skills: string[]; // Required skill list
   };
-  type: string;
+
+  type: "Full-time" | "Part-time" | "Remote" | "Contract" | "Internship"; // Job type
+
   company: {
-    _id: string;
-    name: string;
-    logo: string;
-    companyDescription: string;
+    _id?: string; // Optional company ID if linked from backend
+    name: string; // Company name
+    logo?: string; // Optional logo URL
+    companyDescription?: string; // Optional description
   };
-  postedAt: string;
-  appliedDeadLine: string;
-};
+  postedAt: string; // Posting date (e.g., "Sep 8, 2025")
+  appliedDeadLine: string; // Application deadline (e.g., "Dec 8, 2025")
+}

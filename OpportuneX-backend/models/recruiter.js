@@ -18,10 +18,6 @@ const recruiterSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    emailVerified: {
-      type: Boolean,
-      default: false,
-    },
     emailOtp: {
       type: Number,
       default: null,
@@ -31,7 +27,6 @@ const recruiterSchema = new mongoose.Schema(
       default: null,
     },
     onboardingSteps: {
-      register: { type: Boolean, default: false },
       emailVerification: { type: Boolean, default: false },
       company: { type: Boolean, default: false },
     },

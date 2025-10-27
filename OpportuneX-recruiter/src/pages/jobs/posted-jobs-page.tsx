@@ -1,6 +1,6 @@
 import { JobList } from "@/components/job-list";
 import { JobFilter } from "@/components/job-filter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -14,11 +14,13 @@ import {
 } from "@/components/ui/pagination";
 import { queryClientIns } from "@/components/QueryClientWrapper";
 import { routes } from "@/lib/clientRoutes";
+import useAuth from "@/hooks/useAuth";
+import { useUser } from "@/context/AuthContext";
 
 const PostedJobsListingPage = () => {
   const [params, setParams] = useSearchParams();
   const newParams = new URLSearchParams(params);
-
+  const { recruiter } = useUser();
   const [filters, setFilters] = useState({
     status: params.get("status") || "all",
     type: params.get("type") || "all",
@@ -36,11 +38,8 @@ const PostedJobsListingPage = () => {
   };
   const [currentPage, setCurrentPage] = useState(params.get("page") || 1);
 
-  const queryString = `${
-    filters.search ? `search=${filters.search.trim()}` : ""
-  }`;
   const { refetch, data, isLoading, error } = useApiQuery<{ data: any }>({
-    url: "/job/all?" + queryString,
+    url: `/job/${recruiter.company._id}/posted-jobs?` + newParams.toString(),
     queryKey: ["posted-jobs-data", filters],
     enabled: true,
     refetchOnMount: false,
@@ -50,6 +49,15 @@ const PostedJobsListingPage = () => {
 
   const per_page = 10;
   const totalPages = Math.round(data?.data?.length / per_page);
+
+  useEffect(() => {
+    const page = params.get("page");
+    if (!page) {
+      setCurrentPage(1);
+      newParams.set("page", "1");
+      setParams(newParams);
+    }
+  }, []);
 
   return (
     <div className="space-y-4">

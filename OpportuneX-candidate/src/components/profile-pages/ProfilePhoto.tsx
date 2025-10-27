@@ -72,7 +72,9 @@ const ProfilePhoto = () => {
 
         setPreviewurl(resumtUrl);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handlePhotoSubmit = async () => {

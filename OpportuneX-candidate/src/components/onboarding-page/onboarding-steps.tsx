@@ -37,12 +37,12 @@ export default function DarkStepper() {
 
   useEffect(() => {
     const steps = [];
-    for (let step in arr) {
+    for (const step in arr) {
       const lavel = takeLavel(step);
       steps.push(lavel);
     }
     setSteps(steps);
-  }, [user, currentPath]);
+  }, [user, currentPath, arr, takeLavel]);
 
   return (
     <div className="w-full flex justify-center bg-zinc-950 mt-5 px-1">

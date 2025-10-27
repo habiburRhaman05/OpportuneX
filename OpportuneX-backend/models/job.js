@@ -1,75 +1,72 @@
 const mongoose = require("mongoose")
 
 const jobSchema = new mongoose.Schema(
-  {
-    title: {
+    {
+    // Unique Job ID
+    _id: {
       type: String,
-      required: [true, "Job title is required"],
-      trim: true,
+      required: true,
+      unique: true,
     },
-    location: {
-      type: String,
-      required: [true, "Location is required"],
-      trim: true,
-    },
-    description: {
-      type: String,
-      required: [true, "Job description is required"],
-    },
+
+    // 🏷️ Title & Description
+    title: { type: String, required: true, trim: true },
+    description: { type: String, required: true },
+
+    // 📍 Location
+    location: { type: String, required: true },
+
+    /**
+     * 🧾 Responsibility Section
+     * English: Contains a title and list of key responsibilities.
+     * বাংলা: টাইটেল এবং দায়িত্বের লিস্ট রাখা হয় এখানে।
+     */
     responsibility: {
-      title: {
-        type: String,
-        default: "Key Responsibilities",
-        trim: true,
-      },
-      list: {
-        type: [String],
-        validate: {
-          validator: function (arr) {
-            return arr.length > 0;
-          },
-          message: "At least one responsibility is required",
+      title: { type: String, default: "Key Responsibilities" },
+      list: [
+        {
+          type: String,
+          required: true,
         },
-      },
+      ],
     },
+
+    /**
+     * 🧩 Requirements Section
+     * English: Includes education, experience, and skill requirements.
+     * বাংলা: শিক্ষাগত যোগ্যতা, অভিজ্ঞতা এবং স্কিল সংরক্ষণ করা হয়।
+     */
+    requirements: {
+      education: { type: String, required: true },
+      experience: { type: String, required: true },
+      skills: [
+        {
+          type: String,
+          required: true,
+        },
+      ],
+    },
+
+    // 📦 Job Type (Full-time, Part-time, etc.)
+    employment_type: {
+      type: String,
+      enum: ["Full-time", "Part-time", "Remote", "Contract", "Internship"],
+      default: "Full-time",
+    },
+    // ✅ Job Status (open/closed)
     status: {
       type: String,
-      enum: ["open", "closed", ""],
+      enum: ["open", "closed"],
       default: "open",
     },
-    requirements: {
-      education: {
-        type: String,
-        required: [true, "Education requirement is required"],
-      },
-      experience: {
-        type: String,
-        required: [true, "Experience requirement is required"],
-      },
-      skills: {
-        type: [String],
-        validate: {
-          validator: function (arr) {
-            return arr.length > 0;
-          },
-          message: "At least one skill is required",
-        },
-      },
-    },
-    salary: {
-      type: Number,
-      min: [0, "Salary must be a positive number"],
-      required: true,
-    },
-    type: {
-      type: String,
-      required: [true, "Employment type is required"],
-    },
-    postedBy: {
+    company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
-      required: [true, "Company is required"],
+      required: true,
     },
+    // 📅 Dates
+    postedAt: { type: String, required: true },
+    appliedDeadLine: { type: String, required: true },
   },
   { timestamps: true }
 );

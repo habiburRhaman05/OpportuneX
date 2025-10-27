@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
+import { Link } from "react-router-dom";
 
 const ResumeForm = () => {
   const [resumeUrl, setResumeUrl] = useState("");
@@ -84,6 +85,8 @@ const ResumeForm = () => {
 
   // Save handler
   const handleSave = async () => {
+    console.log(previewUrl);
+
     await submitMutation.mutateAsync({ resumeUrl: previewUrl });
   };
 
@@ -147,14 +150,16 @@ const ResumeForm = () => {
                 </div>
               </div>
               <div className="flex items-center gap-x-3">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="p-2 bg-blue-950 px-6"
-                >
-                  View
-                </Button>
+                <Link to={user.data.resumeUrl}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="p-2 bg-blue-950 px-6"
+                  >
+                    View
+                  </Button>
+                </Link>
                 <Button
                   type="button"
                   onClick={handleDeleteResume}

@@ -36,12 +36,7 @@ exports.createCompany = async (req, res, next) => {
     });
 
     recruiter.company = company._id;
-    company.recruiters.push(recruiter._id);
-    recruiter.onboardingSteps = {
-     register:true,
-     emailVerification:true,
-     company:true
-   }
+    recruiter.onboardingSteps.company = true
     await recruiter.save();
     await company.save();
 
@@ -63,7 +58,6 @@ exports.createCompany = async (req, res, next) => {
     return res.status(201).json({
       success: true,
       message: "Company created successfully",
-      data: company,
     });
   } catch (error) {
     logger.error(error.message);

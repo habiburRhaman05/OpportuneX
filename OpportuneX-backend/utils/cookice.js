@@ -2,7 +2,7 @@ const logger = require("./logger");
 
 exports.sendCookie = async (res, cookieName, token) => {
   try {
-    logger.info("token",token)
+
     await res.cookie(
       cookieName,
       token,

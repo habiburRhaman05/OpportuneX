@@ -31,7 +31,12 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const navigate = useNavigate();
   const {
-    registerMutation: { mutateAsync: handleRegister, isError, isPending },
+    registerMutation: {
+      mutateAsync: handleRegister,
+      isError,
+      isPending,
+      isSuccess,
+    },
   } = useAuth();
 
   const {
@@ -69,15 +74,6 @@ export default function RegisterPage() {
             {...register("password")}
             type="password"
             placeholder="Create a secure password"
-          />
-        </FormField>
-
-        <FormField
-          label="Profile Photo"
-          description="Upload a professional photo"
-        >
-          <PhotoUpload
-            onPhotoSelect={(file) => console.log("Photo selected:", file)}
           />
         </FormField>
 

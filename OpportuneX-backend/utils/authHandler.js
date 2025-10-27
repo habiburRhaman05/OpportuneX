@@ -35,9 +35,12 @@ const generateTokens = async (user,expire, secret) => {
 const generateDecodedToken = async (token, secret) => {
   const { err, decoded } = await jwt.verify(
     token,
-    secret,
+    process.env.AUTH_JWT_SECRIT,
     function (err, decoded) {
      if(err){
+      console.log("secrect", secret);
+      console.log("token", token);
+      
       console.log("erro-from decode ",err);
       
      }

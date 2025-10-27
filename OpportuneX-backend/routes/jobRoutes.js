@@ -1,5 +1,5 @@
 
-const { createJob,updateJob, getJobDetails,getAllJobs ,applyJob, getAllAppledJobs, searchJob, getAllApplication, getJobApplicants, getJobCategories, savedJob, selectApplications, rejectApplications, shortListApplications } = require('../controllers/jobController');
+const { createJob,updateJob, getJobDetails,getAllJobs ,applyJob, getAllAppledJobs, searchJob, getAllApplication, getJobApplicants, getJobCategories, savedJob, selectApplications, rejectApplications, shortListApplications, getAllCreatedJobs } = require('../controllers/jobController');
 const express = require('express');
 const { authenticatedRoutes, authorize } = require('../middlewares/authMiddleware');
 
@@ -9,6 +9,7 @@ const router = express.Router();
 
 // Register API
 router.get('/all', getAllJobs);
+router.get('/:companyId/posted-jobs', getAllCreatedJobs);
 router.get('/search', searchJob);
 // candidate can access
 router.get('/applied-jobs/:userId', authenticatedRoutes,authorize(['candidate']), getAllAppledJobs);

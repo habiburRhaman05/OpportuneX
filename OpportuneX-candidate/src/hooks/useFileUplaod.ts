@@ -23,7 +23,6 @@ export function useFileUpload(): UseUploadFileReturn {
     setLoading(true);
     setError(null);
     try {
-      await delay(3000);
       const formData = new FormData();
       formData.append("file", file);
       const res = await api.post(uploadUrl, formData, {

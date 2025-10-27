@@ -2,7 +2,7 @@ import { Bookmark } from "lucide-react";
 import { Link } from "react-router-dom";
 // import { convertTimestampToReadableDate } from "./../../utils/index";
 import { Description } from "@radix-ui/react-dialog";
-import { convertTimestampToReadableDate } from "@/utils";
+import { formatDate } from "@/helper/formatDate";
 
 // Utility function to generate dark mode-friendly random background color
 const getRandomColor = () => {
@@ -57,7 +57,7 @@ export const JobCard = ({
   title,
 }) => {
   const randomBgColor = getRandomColor(); // Get a random background color based on theme
-  const readableDate = convertTimestampToReadableDate(parseInt(date));
+  const readableDate = formatDate(parseInt(date));
 
   return (
     <div

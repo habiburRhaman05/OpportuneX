@@ -8,43 +8,9 @@ const { validationResult } = require("express-validator");
 const Recruiter = require("../models/recruiter");
 const Company = require("../models/company");
 const { generateTokens } = require("../utils/authHandler");
-
+const { emailQueue } = require("../queue/emailQueue.js");
 const JWT_SECRIT = process.env.AUTH_JWT_SECRIT
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d"; // cookie expiry
-      const dummyRecruiter = {
-      _id: 5492645965697,
-      bio:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt dolorum, aliquam repudiandae modi doloribus repellat molestias illo ex quis eius enim accusantium soluta quam, quasi aliquid. Labore, officiis, provident eaque reprehenderit minus perspiciatis id quam culpa illum ducimus eos ullam iste suscipit a! Officiis, blanditiis rerum dolorum fuga sed ducimus!",
-      profilePhoto:"",
-      role:"recruiter",
-      fullName: "Abdur Rhaman",
-      email: "rhaman@gmail.com",
-      position: "Senior recruiter",
-      location: "Gulshan,Dhaka",
-      socialLinks:{
-        facebook:"www.facebook.com/adbur_rahim",
-        linkedin:"www.linkedin.in/adbur_rahim",
-        github:"www.github.com/adbur_rahim",
-
-      },
-      profileComplection:50,
-      emailVerified:false,
-      otpExpiresAt:null,
-      emailOtp:null,
-      onboardingSteps:{
-        emailVerification:false,
-        company:false
-      },
-      company:companyData,
-      messingFeilds:[
-        "profilePhoto"
-      ]
-    };
-// controllers/recruiterAuthController.js
-// Mongoose model (or Sequelize if SQL)
-
-// @desc    Register recruiter
-// @route   POST /api/v1/auth/recruiter/register
-// @access  Public
 exports.registerRecruiter = async (req, res, next) => {
   try {
     // Validate request
@@ -53,7 +19,10 @@ exports.registerRecruiter = async (req, res, next) => {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { fullName, email, password, company } = req.body;
+    const { fullName, email, password,bio,location } = req.body;
+
+    console.log(fullName, email, password);
+    
 
     // Check if recruiter already exists
     const existingRecruiter = await Recruiter.findOne({ email });
@@ -73,26 +42,21 @@ exports.registerRecruiter = async (req, res, next) => {
       fullName,
       email,
       password: hashedPassword,
-      company,
-      role: "recruiter",
+      role:"recruiter",
+      bio,
+      location
     });
-    logger.info(`Recruiter registered: ${newRecruiter.email}`);
 
-    //sending email
-
-    const otp = await sendVerificationMail(newRecruiter);
-
-    newRecruiter.emailOtp = otp;
-    newRecruiter.otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
-    newRecruiter.onboardingSteps = {
-      register: true,
-      emailVerification: false,
-      company: false,
-    };
     await newRecruiter.save();
+    //sending email
+        await emailQueue.add("welcomeEmail", newRecruiter);
 
     // Generate JWT
-    const token = generateTokens(newRecruiter, JWT_EXPIRES_IN, JWT_SECRIT);
+     const { token } = await generateTokens(
+      newRecruiter,
+      JWT_EXPIRES_IN,
+       process.env.AUTH_JWT_SECRIT
+    );
 
     //sending cookice
     const cookieName = "accessToken";
@@ -125,26 +89,26 @@ exports.loginRecruiter = async (req, res, next) => {
     }
     const { email, password } = req.body;
 
-    // const recruiter = await Recruiter.findOne({ email });
-    // if (!recruiter) {
-    //   return res.status(401).json({
-    //     success: false,
-    //     message: "Invalid email or password",
-    //   });
-    // }
+    const recruiter = await Recruiter.findOne({ email });
+    if (!recruiter) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
 
-    // const isMatch = await bcrypt.compare(password, recruiter.password);
-    // if (!isMatch) {
-    //   return res.status(401).json({
-    //     success: false,
-    //     message: "Invalid email or password",
-    //   });
-    // }
+    const isMatch = await bcrypt.compare(password, recruiter.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
 
 
 
     const { token } = await generateTokens(
-      dummyRecruiter,
+      recruiter,
       JWT_EXPIRES_IN,
        process.env.AUTH_JWT_SECRIT
     );
@@ -170,24 +134,21 @@ exports.loginRecruiter = async (req, res, next) => {
   }
 };
 
-// @desc    Get recruiter profile
-// @route   GET /api/v1/auth/recruiter/profile
-// @access  Private (Recruiter only)
+
 exports.getRecruiterProfile = async (req, res, next) => {
   try {
-    // const recruiter = await Recruiter.findById(req.user.id).select("-password");
+    const recruiter = await Recruiter.findById(req.user.id).select("-password").populate("company")
 
-    // if (!recruiter) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Recruiter not found",
-    //   });
-    // }
-
+    if (!recruiter) {
+      return res.status(404).json({
+        success: false,
+        message: "Recruiter not found",
+      });
+    }
 
     return res.status(200).json({
       success: true,
-      data: dummyRecruiter,
+      data: recruiter,
     });
   } catch (error) {
     logger.error(error.message);
@@ -195,9 +156,6 @@ exports.getRecruiterProfile = async (req, res, next) => {
   }
 };
 
-// @desc    Update recruiter profile
-// @route   PUT /api/v1/auth/recruiter/profile
-// @access  Private (Recruiter only)
 exports.updateRecruiterProfile = async (req, res, next) => {
   try {
     const updates = req.body;
@@ -206,34 +164,22 @@ exports.updateRecruiterProfile = async (req, res, next) => {
       updates.password = await bcrypt.hash(updates.password, salt);
     }
 
-    // const recruiter = await Recruiter.findByIdAndUpdate(req.user.id, updates, {
-    //   new: true,
-    // }).select("-password");
+    const recruiter = await Recruiter.findByIdAndUpdate(req.user.id, updates, {
+      new: true,
+    }).select("-password");
 
-    // if (!recruiter) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Recruiter not found",
-    //   });
-    // }
+    if (!recruiter) {
+      return res.status(404).json({
+        success: false,
+        message: "Recruiter not found",
+      });
+    }
 
-    // logger.info(`Recruiter updated profile: ${recruiter.email}`);
-// console.log(updates);
 
-    // dummyRecruiter.profilePhoto = updates.profilePhoto
-//     console.log(dummyRecruiter);
-
-dummyRecruiter.onboardingSteps = {
-  register:true,
-  emailVerification:true,
-  company:true
-}
-    
 
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      // data: recruiter,
     });
   } catch (error) {
     logger.error(error.message);
@@ -247,8 +193,7 @@ dummyRecruiter.onboardingSteps = {
 // @access  Private
 exports.logoutRecruiter = async (req, res, next) => {
   try {
-    // On client side: remove token from storage
-    // On server: optionally implement token blacklist
+
    res.clearCookie('accessToken', {
       httpOnly: true,
       secure: false,
@@ -269,25 +214,18 @@ exports.sendOtp = async (req, res, next) => {
   try {
     const email = req.user.email;
 
-    // const recruiter = await Recruiter.findOne({ email });
-    // if (!recruiter) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Recruiter not found with this email",
-    //   });
-    // }
+    const recruiter = await Recruiter.findOne({ email });
+    if (!recruiter) {
+      return res.status(404).json({
+        success: false,
+        message: "Recruiter not found with this email",
+      });
+    }
 
     // // Generate 6-digit OTP
-    const otp = 111111 || (await sendVerificationMail(recruiter));
-
-    // recruiter.emailOtp = otp;
-    // recruiter.otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
-    // await recruiter.save();
-   dummyRecruiter.emailOtp = otp;
-    dummyRecruiter.otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000).getTime()
-
-    logger.info(`OTP sent to recruiter: ${email}`);
-
+  
+    // Send OTP
+    await emailQueue.add("resendOtp", recruiter);
     return res.status(200).json({
       success: true,
       message: "OTP sent in your email successfully",
@@ -309,61 +247,37 @@ exports.verifyOtp = async (req, res, next) => {
     }
     const { email, otp } = req.body;
 
-    // const recruiter = await Recruiter.findOne({ email });
-    // if (!recruiter) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Recruiter not found with this email",
-    //   });
-    // }
-    // if (
-    //   !recruiter ||
-    //   recruiter.emailOtp !== otp ||
-    //   recruiter.otpExpiresAt < Date.now()
-    // ) {
-    //   recruiter.onboardingSteps = {
-    //     register: true,
-    //     emailVerification: true,
-    //     company: false,
-    //   };
-    //   await recruiter.save();
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Invalid or expired OTP",
-    //   });
-    // }
-
-    // // Mark recruiter emailVerified = true
-    // recruiter.emailVerified = true;
-    // recruiter.emailOtp = null;
-    // recruiter.otpExpiresAt = null;
-
-
-     if (
-      dummyRecruiter.emailOtp !== Number(otp)
-    ) {
-      
- return res.status(400).json({
-      success: false,
-      message: "Your OTP is Invalid",
-    });
+    const recruiter = await Recruiter.findOne({ email });
+    if (!recruiter) {
+      return res.status(404).json({
+        success: false,
+        message: "Recruiter not found with this email",
+      });
     }
-     if (
-      dummyRecruiter.otpExpiresAt < new Date(Date.now()).getTime()
-     
+    if (
+      !recruiter ||
+      recruiter.emailOtp !== otp ||
+      recruiter.otpExpiresAt < Date.now()
     ) {
- return res.status(400).json({
-      success: false,
-      message: "Your OTP is Expired",
-    });
+      recruiter.onboardingSteps = {
+        register: true,
+        emailVerification: true,
+        company: false,
+      };
+      await recruiter.save();
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired OTP",
+      });
     }
-    
-    dummyRecruiter.emailVerified = true;
-    dummyRecruiter.emailOtp = null;
-    dummyRecruiter.otpExpiresAt = null;
-    dummyRecruiter.onboardingSteps.emailVerification = true
-    logger.info(`OTP verified for recruiter: ${email}`);
 
+    // Mark recruiter emailVerified = true
+    recruiter.emailVerified = true;
+    recruiter.emailOtp = null;
+    recruiter.otpExpiresAt = null;
+
+
+  
     return res.status(200).json({
       success: true,
       message: "email verified successfully",
@@ -385,26 +299,26 @@ exports.changePassword = async (req, res, next) => {
     }
     const { oldPassword, newPassword } = req.body;
 
-    // const recruiter = await Recruiter.findById(req.user.id);
-    // if (!recruiter) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Recruiter not found",
-    //   });
-    // }
+    const recruiter = await Recruiter.findById(req.user.id);
+    if (!recruiter) {
+      return res.status(404).json({
+        success: false,
+        message: "Recruiter not found",
+      });
+    }
 
-    // const isMatch = await bcrypt.compare(oldPassword, recruiter.password);
-    // if (!isMatch) {
-    //   return res.status(401).json({
-    //     success: false,
-    //     message: "Old password is incorrect",
-    //   });
-    // }
+    const isMatch = await bcrypt.compare(oldPassword, recruiter.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Old password is incorrect",
+      });
+    }
 
-    // const salt = await bcrypt.genSalt(10);
-    // recruiter.password = await bcrypt.hash(newPassword, salt);
+    const salt = await bcrypt.genSalt(10);
+    recruiter.password = await bcrypt.hash(newPassword, salt);
 
-    // await recruiter.save();
+    await recruiter.save();
 
     // logger.info(`Recruiter changed password: ${recruiter.email}`);
 
@@ -423,14 +337,14 @@ exports.changePassword = async (req, res, next) => {
 // @access  Private (Recruiter only)
 exports.deleteAccount = async (req, res, next) => {
   try {
-    // const recruiter = await Recruiter.findByIdAndDelete(req.user.id);
+    const recruiter = await Recruiter.findByIdAndDelete(req.user.id);
 
-    // if (!recruiter) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Recruiter not found",
-    //   });
-    // }
+    if (!recruiter) {
+      return res.status(404).json({
+        success: false,
+        message: "Recruiter not found",
+      });
+    }
 
     // logger.warn(`Recruiter account deleted: ${recruiter.email}`);
 

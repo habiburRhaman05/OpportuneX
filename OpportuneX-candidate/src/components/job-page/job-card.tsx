@@ -1,27 +1,18 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Job } from "@/types/job.type";
 import { Link } from "react-router-dom";
 
-export interface JobCardProps {
-  id?: string;
-  title: string;
-  company: string;
-  location: string;
-  salary: string;
-  type: string;
-  logo?: string;
-  postedAt: string;
+export interface JobCardProps extends Partial<Job> {
   featured?: boolean;
 }
 
 const JobCard = ({
-  id,
+  _id,
   title,
   company,
   location,
-  salary,
   type,
-  logo,
   postedAt,
   featured = false,
 }: JobCardProps) => {
@@ -34,9 +25,9 @@ const JobCard = ({
       <div className="flex items-start gap-4 h-full flex-col">
         <div className="flex items-start gap-4 w-full">
           <div className="h-12 w-12 rounded-md bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
-            {logo ? (
+            {company.logo ? (
               <img
-                src={logo}
+                src={company.logo}
                 alt={`${company.logo} logo`}
                 className="h-8 w-8"
               />
@@ -70,16 +61,13 @@ const JobCard = ({
           <span className="inline-flex items-center text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
             {type}
           </span>
-          <span className="inline-flex items-center text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-            {salary}
-          </span>
         </div>
 
         <div className="flex items-center justify-between w-full mt-auto">
           <span className="text-xs text-gray-500">{postedAt}</span>
-          {id ? (
+          {_id ? (
             <Button variant="outline" className="text-xs h-8" asChild>
-              <Link to={`/jobs/${id}`}>Apply Now</Link>
+              <Link to={`/jobs/${_id}`}>Apply Now</Link>
             </Button>
           ) : (
             <Button variant="outline" className="text-xs h-8">

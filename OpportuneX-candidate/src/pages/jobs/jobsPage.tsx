@@ -104,7 +104,10 @@ const Jobs = () => {
     setSearchParams(params);
   };
 
-  const { data: jobData, isLoading } = useApiQuery({
+  const { data: jobData, isLoading } = useApiQuery<{
+    data: any;
+    totalPages: number;
+  }>({
     url: "/job/all",
     queryKey: ["fetch-job-data", searchParams.toString()],
     enabled: true,
@@ -262,13 +265,11 @@ const Jobs = () => {
                       className="border border-gray-100 dark:border-gray-800 rounded-xl p-6 transition-shadow hover:shadow-md h-full"
                     >
                       <JobCard
-                        id={job._id}
+                        _id={job._id}
                         title={job.title}
                         company={job.company}
                         location={job.location}
-                        salary={"55"}
                         type={job.type}
-                        logo={job.logo}
                         postedAt={job.postedAt}
                         featured={job.featured}
                       />

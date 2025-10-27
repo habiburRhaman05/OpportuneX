@@ -94,3 +94,12 @@
  2025-10-11 06:42:51 [ERROR]: Operation `recruiters.findOne()` buffering timed out after 10000ms
  2025-10-11 06:43:03 [ERROR]: Operation `recruiters.findOne()` buffering timed out after 10000ms
  2025-10-25 17:42:45 [ERROR]: secretOrPrivateKey must have a value
+ 2025-10-26 18:49:21 [ERROR]: E11000 duplicate key error collection: job-board.recruiters index: userId_1 dup key: { userId: null }
+ 2025-10-26 18:49:24 [ERROR]: E11000 duplicate key error collection: job-board.recruiters index: userId_1 dup key: { userId: null }
+ 2025-10-26 18:49:50 [ERROR]: E11000 duplicate key error collection: job-board.recruiters index: userId_1 dup key: { userId: null }
+ 2025-10-26 18:49:53 [ERROR]: E11000 duplicate key error collection: job-board.recruiters index: userId_1 dup key: { userId: null }
+ 2025-10-26 18:50:36 [ERROR]: E11000 duplicate key error collection: job-board.recruiters index: userId_1 dup key: { userId: null }
+ 2025-10-26 18:50:57 [ERROR]: E11000 duplicate key error collection: job-board.recruiters index: userId_1 dup key: { userId: null }
+ 2025-10-26 19:25:45 [ERROR]: Cast to ObjectId failed for value "3244694949" (type number) at path "company" because of "BSONError"
+ 2025-10-26 19:25:53 [ERROR]: Cast to ObjectId failed for value "3244694949" (type number) at path "company" because of "BSONError"
+ 2025-10-26 19:25:56 [ERROR]: Cast to ObjectId failed for value "3244694949" (type number) at path "company" because of "BSONError"

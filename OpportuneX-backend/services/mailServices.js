@@ -5,6 +5,7 @@ const { generateOTP } = require('../utils/generateOtp');
 const { generateTokens } = require('../utils/authHandler');
 const ErrorHandler = require('../utils/errorHandler');
 const Candidate = require('../models/candidate');
+    const Recruiter = require('../models/recruiter');
 
 async function sendVerificationMail(user) {
 try {
@@ -22,10 +23,17 @@ try {
 
   // Update user with OTP and expiry (assuming user is a Mongoose document)
   
-  const candidate = await Candidate.findById(user._id);
-  candidate.emailOtp = verificationOTP;
-  candidate.otpExpiresAt = new Date(otpExpiry);
-  await candidate.save();
+  if(user.role==="candidate"){
+    const candidate = await Recruiter.findById(user._id);
+    candidate.emailOtp = verificationOTP;
+    candidate.otpExpiresAt = new Date(otpExpiry);
+    await candidate.save();
+  }else if(user.role==="recruiter"){
+    const recruiter = await Recruiter.findById(user._id);
+    recruiter.emailOtp = verificationOTP;
+    recruiter.otpExpiresAt = new Date(otpExpiry);
+    await recruiter.save();
+  }
 
   return true
 } catch (error) {
@@ -75,10 +83,18 @@ try {
 
   // Update user with OTP and expiry (assuming user is a Mongoose document)
   
-  const candidate = await Candidate.findById(user._id);
-  candidate.emailOtp = verificationOTP;
-  candidate.otpExpiresAt = new Date(otpExpiry);
-  await candidate.save();
+   if(user.role==="candidate"){
+    const candidate = await Recruiter.findById(user._id);
+    candidate.emailOtp = verificationOTP;
+    candidate.otpExpiresAt = new Date(otpExpiry);
+    await candidate.save();
+  }else if(user.role==="recruiter"){
+    const recruiter = await Recruiter.findById(user._id);
+    recruiter.emailOtp = verificationOTP;
+    recruiter.otpExpiresAt = new Date(otpExpiry);
+    await recruiter.save();
+  }
+
 
   return true
 } catch (error) {

@@ -27,6 +27,7 @@ export interface User {
   skills: string[];
   achievements?: string[];
   resumeUrl?: string;
+  profileCompletion: number;
 }
 export interface AuthContextType {
   user: { data: User } | null;

@@ -210,7 +210,7 @@ function ResumeReviewForm({ parsedData }) {
               <Input
                 type="text"
                 placeholder="Add skill and press Enter"
-                onKeyDown={(e) => {
+                onKeyDown={(e: any) => {
                   if (e.key === "Enter" && e.target.value.trim()) {
                     handleChange("skills", [
                       ...formData.skills,

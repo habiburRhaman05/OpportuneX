@@ -94,12 +94,12 @@ export default function EmailVerification() {
     if (onboardingVerifyOtpMutation.isSuccess) {
       navigate("/onboarding/profile-info");
     }
-  }, [onboardingVerifyOtpMutation.isSuccess]);
+  }, [onboardingVerifyOtpMutation.isSuccess, navigate]);
   useEffect(() => {
     if (user.data.onboardingSteps.emailVerification) {
       navigate("/onboarding/profile-info");
     }
-  }, [user]);
+  }, [user, navigate]);
 
   return (
     <div>

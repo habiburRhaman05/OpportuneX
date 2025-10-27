@@ -288,11 +288,12 @@ export default function OnboardingPage() {
     await onboardingHandler.mutateAsync(payload);
     navigate("/onboarding/welcome");
   };
+
   useEffect(() => {
-    if (user.data.onboardingSteps.profileInfo) {
+    if (user?.data?.onboardingSteps?.profileInfo) {
       navigate("/onboarding/welcome");
     }
-  }, [user]);
+  }, [user?.data?.onboardingSteps?.profileInfo, navigate]);
 
   const renderProfileTab = () => (
     <div className="space-y-2 rounded-md bg-zinc-900/50">

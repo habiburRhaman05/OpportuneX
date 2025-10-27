@@ -83,7 +83,7 @@ const ProfessionalInformation = () => {
           github: user.data.socialProfiles?.github || "",
         },
       };
-      setWorkExperienceData(user?.data.workExperiences);
+      setWorkExperienceData(user?.data.workExperience);
       setFormData(freshData);
       console.log(freshData);
 

@@ -20,6 +20,7 @@ exports.uploadFile = async (req, res) => {
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(file.path, {
       folder: "react_uploads",
+      
     });
 
     // Delete temp file

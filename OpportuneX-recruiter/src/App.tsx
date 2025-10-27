@@ -35,6 +35,7 @@ import CreateCompanyPage from "./pages/onboarding/CreateCompany";
 import OnBoardingGuard from "./components/OnBoardingGuard";
 import CompanyProfile from "./pages/company-profile/company-profile";
 import AuthProtectedRoute from "./components/auth-protected";
+import CompanyEmailVerification from "./pages/verify-company/verify-company-page";
 
 const PostedJobsList = React.lazy(
   () => import("@/pages/jobs/posted-jobs-page")
@@ -65,6 +66,14 @@ const App = () => {
               <ProtectedRoute>
                 <DashboardPage />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="company/verify"
+            element={
+              // <ProtectedRoute>
+              <CompanyEmailVerification />
+              // </ProtectedRoute>
             }
           />
           <Route
@@ -138,7 +147,14 @@ const App = () => {
               </Suspense>
             }
           ></Route>
-
+          <Route
+            path="profile/company/verify"
+            element={
+              // <ProtectedRoute>
+              <CompanyEmailVerification />
+              // </ProtectedRoute>
+            }
+          />
           <Route
             path="profile/edit"
             element={

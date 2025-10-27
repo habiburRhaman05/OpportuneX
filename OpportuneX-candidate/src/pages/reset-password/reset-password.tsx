@@ -18,13 +18,15 @@ const changePasswordSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+// ✅ Type inference from schema
+type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
 const ResetPasswordPage = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
   });
 
