@@ -182,8 +182,8 @@ exports.loginCandidate = async (req, res, next) => {
 
     res.cookie("accessToken", token, {
       httpOnly: true,
-      secure: false, // Set to true in production (with HTTPS)
-      sameSite: "Lax", // Or 'None' if frontend & backend are different origins
+      secure: true, // Set to true in production (with HTTPS)
+      sameSite: "None", // Or 'None' if frontend & backend are different origins
       maxAge: 1000 * 60 * 30, // ✅ 2 minutes in milliseconds (not seconds)
     });
 
