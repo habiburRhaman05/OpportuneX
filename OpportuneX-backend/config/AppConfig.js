@@ -26,6 +26,7 @@ exports.appConfig = async (app) => {
     "http://192.168.0.107:5173",
     "http://localhost:5173",
     "http://localhost:5500",
+    "https://opportune-x-theta.vercel.app"
   ];
   const corsOptions = {
     origin: allowedOrigins,
