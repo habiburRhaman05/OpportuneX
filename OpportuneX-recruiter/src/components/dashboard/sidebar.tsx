@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
 } from "../ui/sidebar";
 import { routes } from "@/lib/clientRoutes";
+import { useUser } from "@/context/AuthContext";
 
 const navItems = [
   {
@@ -41,6 +42,12 @@ const accountItems = [
   {
     to: routes.profile_page,
     label: "My Profile",
+    icon: User,
+    tooltip: "Edit Profile",
+  },
+  {
+    to: `${routes.companyProfile}`,
+    label: "Company Profile",
     icon: User,
     tooltip: "Edit Profile",
   },

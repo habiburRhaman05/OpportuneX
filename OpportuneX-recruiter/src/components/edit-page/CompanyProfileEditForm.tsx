@@ -92,6 +92,10 @@ const CompanyProfileEditForm = () => {
     await photoSubmitMutation.mutateAsync({ logo: previewUrl });
   };
 
+  if (!recruiter.company) {
+    return <div>company profile not created</div>;
+  }
+
   return (
     <>
       <div className="space-y-6">

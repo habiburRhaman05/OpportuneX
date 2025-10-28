@@ -31,6 +31,7 @@
     "src/pages/accounts",
     "../OpportuneX-candidate/src/lib",
     "../OpportuneX-candidate/src/hooks",
-    "../OpportuneX-candidate/src/api"
+    "../OpportuneX-candidate/src/api",
+    "../OpportuneX-candidate/src/pages/public-view-profile"
   ]
 }

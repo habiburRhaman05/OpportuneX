@@ -1,36 +1,9 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import {
-  User,
-  Briefcase,
-  Globe,
-  Github,
-  Linkedin,
-  Twitter,
-  Plus,
-  X,
-  Upload,
-  Building2,
-  GraduationCap,
-  AlertCircle,
-  FileText,
-  Settings,
-  Bell,
-} from "lucide-react";
+import { AlertCircle, GraduationCap, Plus, X } from "lucide-react";
+import { useState } from "react";
 
 export default function EducationEditForm() {
   const [activeTab, setActiveTab] = useState("profile");

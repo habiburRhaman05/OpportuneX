@@ -19,7 +19,6 @@ export function DashboardLayout() {
           <DashboardSidebar />
           <div className="flex flex-col flex-1 w-full">
             <DashboardHeader />
-
             <main className="flex-1 p-4 md:p-6">{<Outlet />}</main>
           </div>
         </div>

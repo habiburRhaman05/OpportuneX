@@ -1,6 +1,26 @@
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+import { getNames } from "country-list";
+import { Check, ChevronsUpDown } from "lucide-react";
+
 import { FormField } from "@/components/forms/FormField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandItem,
+} from "@/components/ui/command";
 import {
   Select,
   SelectContent,
@@ -8,21 +28,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/context/AuthContext";
 import useAuth from "@/hooks/useAuth";
 import { createCompanySchema } from "@/schemas/form-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { z } from "zod";
+import { cn } from "@/lib/utils";
 
 type CreateCompanyFormData = z.infer<typeof createCompanySchema>;
 
-export default function CreateCompanyForm({ toggleSearchForm }) {
+export default function CreateCompanyForm({
+  toggleSearchForm,
+}: {
+  toggleSearchForm: (v: boolean) => void;
+}) {
   const { recruiter } = useUser();
-
   const {
     createCompanyMutation: {
       mutateAsync: createCompanyHandler,
@@ -30,9 +48,9 @@ export default function CreateCompanyForm({ toggleSearchForm }) {
       isSuccess,
     },
   } = useAuth();
-
   const navigate = useNavigate();
 
+  // ✅ Form hook setup
   const {
     register,
     handleSubmit,
@@ -43,30 +61,55 @@ export default function CreateCompanyForm({ toggleSearchForm }) {
     resolver: zodResolver(createCompanySchema),
   });
 
+  // ✅ Country & Industry search data
+  const countries = getNames();
+  const industries = [
+    "Technology",
+    "Finance",
+    "Healthcare",
+    "Education",
+    "Retail",
+    "Manufacturing",
+    "Energy",
+    "Real Estate",
+    "Transportation",
+    "Entertainment",
+    "Other",
+  ];
+
+  // ✅ Popover states
+  const [openCountry, setOpenCountry] = useState(false);
+  const [openIndustry, setOpenIndustry] = useState(false);
+
   const aboutLength = watch("description")?.length || 0;
+
+  // ✅ Handle Submit
   const onSubmit = async (data: CreateCompanyFormData) => {
     await createCompanyHandler(data);
   };
 
+  // ✅ Redirect after success
   useEffect(() => {
-    if (isSuccess) {
-      navigate("/recruiter/auth/onboarding/welcome");
-    }
+    if (isSuccess) navigate("/recruiter/auth/onboarding/welcome");
   }, [isSuccess]);
 
   return (
     <div>
+      {/* 🏢 Header */}
       <div className="mb-6 text-center">
         <h1 className="text-2xl font-bold">Provide your company information</h1>
         <p className="text-muted-foreground">
-          create a compnay by filling the form
+          Fill in the form to create your company profile.
         </p>
       </div>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* 🏢 Company Name */}
         <FormField label="Company Name" required error={errors.name?.message}>
           <Input {...register("name")} placeholder="Enter company name" />
         </FormField>
 
+        {/* 📧 Official Email */}
         <FormField
           label="Official Email"
           required
@@ -77,13 +120,53 @@ export default function CreateCompanyForm({ toggleSearchForm }) {
             placeholder="example@company.com"
           />
         </FormField>
+
+        {/* 🌐 Website */}
         <FormField label="Website" required error={errors.website?.message}>
-          <Input {...register("website")} placeholder="www.example.co" />
-        </FormField>
-        <FormField label="Location" required error={errors.location?.message}>
-          <Input {...register("location")} placeholder="City, State/Country" />
+          <Input {...register("website")} placeholder="https://company.com" />
         </FormField>
 
+        {/* 📍 Location with searchable countries */}
+        <FormField label="Location" required error={errors.location?.message}>
+          <Popover open={openCountry} onOpenChange={setOpenCountry}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className={cn(
+                  "w-full justify-between",
+                  !watch("location") && "text-muted-foreground"
+                )}
+              >
+                {watch("location") || "Select Country"}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[300px] p-0">
+              <Command>
+                <CommandInput placeholder="Search country..." />
+                <CommandList>
+                  {countries.map((country) => (
+                    <CommandItem
+                      key={country}
+                      onSelect={() => {
+                        setValue("location", country);
+                        setOpenCountry(false);
+                      }}
+                    >
+                      {country}
+                      {watch("location") === country && (
+                        <Check className="ml-auto h-4 w-4" />
+                      )}
+                    </CommandItem>
+                  ))}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </FormField>
+
+        {/* 👥 Company Size */}
         <FormField label="Company Size" required error={errors.size?.message}>
           <Select onValueChange={(value) => setValue("size", value)}>
             <SelectTrigger>
@@ -100,23 +183,47 @@ export default function CreateCompanyForm({ toggleSearchForm }) {
           </Select>
         </FormField>
 
+        {/* 🏭 Industry with search */}
         <FormField label="Industry" required error={errors.industry?.message}>
-          <Select onValueChange={(value) => setValue("industry", value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select industry" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="technology">Technology</SelectItem>
-              <SelectItem value="finance">Finance</SelectItem>
-              <SelectItem value="healthcare">Healthcare</SelectItem>
-              <SelectItem value="education">Education</SelectItem>
-              <SelectItem value="retail">Retail</SelectItem>
-              <SelectItem value="manufacturing">Manufacturing</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-            </SelectContent>
-          </Select>
+          <Popover open={openIndustry} onOpenChange={setOpenIndustry}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className={cn(
+                  "w-full justify-between",
+                  !watch("industry") && "text-muted-foreground"
+                )}
+              >
+                {watch("industry") || "Select Industry"}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[300px] p-0">
+              <Command>
+                <CommandInput placeholder="Search industry..." />
+                <CommandList>
+                  {industries.map((industry) => (
+                    <CommandItem
+                      key={industry}
+                      onSelect={() => {
+                        setValue("industry", industry);
+                        setOpenIndustry(false);
+                      }}
+                    >
+                      {industry}
+                      {watch("industry") === industry && (
+                        <Check className="ml-auto h-4 w-4" />
+                      )}
+                    </CommandItem>
+                  ))}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </FormField>
 
+        {/* 📝 About */}
         <FormField
           label="About Us"
           required
@@ -125,12 +232,13 @@ export default function CreateCompanyForm({ toggleSearchForm }) {
         >
           <Textarea
             {...register("description")}
-            placeholder="Tell us about your company, culture, and what makes it unique..."
+            placeholder="Tell us about your company culture, mission, and uniqueness..."
             className="min-h-[100px] resize-none"
             maxLength={500}
           />
         </FormField>
 
+        {/* 🔘 Buttons */}
         <div className="flex justify-between pt-6">
           <Button
             type="button"

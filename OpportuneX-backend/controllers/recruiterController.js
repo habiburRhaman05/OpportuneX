@@ -9,6 +9,7 @@ const Recruiter = require("../models/recruiter");
 const Company = require("../models/company");
 const { generateTokens } = require("../utils/authHandler");
 const { emailQueue } = require("../queue/emailQueue.js");
+const { generateOTP } = require("../utils/generateOtp.js");
 const JWT_SECRIT = process.env.AUTH_JWT_SECRIT
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d"; // cookie expiry
 exports.registerRecruiter = async (req, res, next) => {
@@ -46,7 +47,10 @@ exports.registerRecruiter = async (req, res, next) => {
       bio,
       location
     });
-
+ const verificationOTP = await generateOTP();
+      const otpExpiry = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
+   newRecruiter.emailOtp = verificationOTP;
+    newRecruiter.otpExpiresAt = new Date(otpExpiry);
     await newRecruiter.save();
     //sending email
         await emailQueue.add("welcomeEmail", newRecruiter);
@@ -223,7 +227,11 @@ exports.sendOtp = async (req, res, next) => {
     }
 
     // // Generate 6-digit OTP
-  
+   const verificationOTP = await generateOTP();
+      const otpExpiry = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
+   recruiter.emailOtp = verificationOTP;
+    recruiter.otpExpiresAt = new Date(otpExpiry);
+    await recruiter.save();
     // Send OTP
     await emailQueue.add("resendOtp", recruiter);
     return res.status(200).json({
@@ -254,27 +262,29 @@ exports.verifyOtp = async (req, res, next) => {
         message: "Recruiter not found with this email",
       });
     }
-    if (
-      !recruiter ||
-      recruiter.emailOtp !== otp ||
-      recruiter.otpExpiresAt < Date.now()
-    ) {
-      recruiter.onboardingSteps = {
-        register: true,
-        emailVerification: true,
-        company: false,
-      };
-      await recruiter.save();
+console.log(otp,recruiter.emailOtp);
+
+
+     // Check if OTP matches
+    if (recruiter.emailOtp != otp) {
       return res.status(400).json({
         success: false,
-        message: "Invalid or expired OTP",
+        message: "Invalid OTP",
       });
     }
 
-    // Mark recruiter emailVerified = true
-    recruiter.emailVerified = true;
-    recruiter.emailOtp = null;
-    recruiter.otpExpiresAt = null;
+    // Check if OTP is expired
+    if (recruiter.otpExpiresAt < Date.now()) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP has expired",
+      });
+    }
+
+       recruiter.onboardingSteps.emailVerification = true;
+       recruiter.emailOtp = null;
+       recruiter.otpExpiresAt = null;
+       await recruiter.save();
 
 
   

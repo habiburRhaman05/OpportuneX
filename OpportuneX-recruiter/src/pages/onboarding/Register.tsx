@@ -5,6 +5,7 @@ import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useUser } from "@/context/AuthContext";
 import useAuth from "@/hooks/useAuth";
 import { delay } from "@/utils/delay";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,12 +30,8 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function Register() {
   const navigate = useNavigate();
-  const {
-    user,
-    register: handleRegister,
-    registerStatus,
-    isLoading,
-  } = useAuth();
+  const { recruiter, isLoading } = useUser();
+  const { registerMutation: handleRegister } = useAuth();
 
   const {
     register,
@@ -56,9 +53,9 @@ export default function Register() {
     return <AppIntro />;
   }
 
-  if (user && user?.data.onboardingSteps.register) {
-    return <Navigate to={"/recruiter/onboarding/email-verification"} replace />;
-  }
+  // if (recruiter && !recruiter?.onboardingSteps.emailVerification) {
+  //   return <Navigate to={"/recruiter/onboarding/email-verification"} replace />;
+  // }
 
   return (
     <OnboardingLayout
@@ -88,15 +85,6 @@ export default function Register() {
         </FormField>
 
         <FormField
-          label="Profile Photo"
-          description="Upload a professional photo"
-        >
-          <PhotoUpload
-            onPhotoSelect={(file) => console.log("Photo selected:", file)}
-          />
-        </FormField>
-
-        <FormField
           label="Bio"
           required
           error={errors.bio?.message}
@@ -121,10 +109,10 @@ export default function Register() {
 
           <Button
             type="submit"
-            disabled={registerStatus.isPending}
+            disabled={handleRegister.isPending}
             className="min-w-[140px]"
           >
-            {registerStatus.isPending ? "Creating..." : "Create Account"}
+            {handleRegister.isPending ? "Creating..." : "Create Account"}
           </Button>
         </div>
       </form>

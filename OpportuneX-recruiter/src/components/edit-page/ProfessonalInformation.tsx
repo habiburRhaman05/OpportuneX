@@ -8,6 +8,7 @@ import { Loader, Plus, X } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import useAuth from "@/hooks/useAuth";
 import WorkExperience from "./work-experiences";
+import { useUser } from "@/context/AuthContext";
 
 interface FormData {
   skills: string[];
@@ -20,7 +21,7 @@ interface FormData {
 }
 
 const ProfessionalInformation = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
 
   const [formData, setFormData] = useState<FormData>({
     skills: [],

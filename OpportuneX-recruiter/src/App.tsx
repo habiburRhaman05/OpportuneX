@@ -156,6 +156,14 @@ const App = () => {
             }
           />
           <Route
+            path="company-profile"
+            element={
+              // <ProtectedRoute>
+              <CompanyProfile />
+              // </ProtectedRoute>
+            }
+          />
+          <Route
             path="profile/edit"
             element={
               <Suspense fallback={<CompanyProfileSkelection />}>
