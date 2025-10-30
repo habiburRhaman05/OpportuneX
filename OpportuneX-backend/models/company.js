@@ -8,10 +8,17 @@ const companySchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
-
     verified: {
       type: Boolean,
       default:false
+    },
+    verified_application_submit: {
+      type: Boolean,
+      default:false
+    },
+    verified_application_expiry: {
+     type: Date,
+   
     },
     officialEmail: {
       type: String,

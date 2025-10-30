@@ -4,7 +4,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-export function DashboardLayout() {
+export function DashboardLayout({ children }) {
   const navigate = useNavigate();
   const path = useLocation().pathname;
   useEffect(() => {
@@ -19,7 +19,9 @@ export function DashboardLayout() {
           <DashboardSidebar />
           <div className="flex flex-col flex-1 w-full">
             <DashboardHeader />
-            <main className="flex-1 p-4 md:p-6">{<Outlet />}</main>
+            <main className="flex-1 p-4 md:p-6">
+              {children ? children : <Outlet />}
+            </main>
           </div>
         </div>
       </SidebarProvider>

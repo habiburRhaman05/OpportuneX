@@ -66,8 +66,8 @@ exports.registerRecruiter = async (req, res, next) => {
     const cookieName = "accessToken";
     const cookieConfig = {
       httpOnly: true,
-      secure: false, // Set to true in production (with HTTPS)
-      sameSite: "Lax", // Or 'None' if frontend & backend are different origins
+      secure: true, // Set to true in production (with HTTPS)
+      sameSite: "None", // Or 'None' if frontend & backend are different origins
       maxAge: 1000 * 60 * 30, // ✅ 2 minutes in milliseconds (not seconds)
     };
     await sendCookie(res, cookieName, token, cookieConfig);
@@ -121,8 +121,8 @@ exports.loginRecruiter = async (req, res, next) => {
     const cookieName = "accessToken";
     const cookieConfig = {
       httpOnly: true,
-      secure: false, // Set to true in production (with HTTPS)
-      sameSite: "Lax", // Or 'None' if frontend & backend are different origins
+      secure: true, // Set to true in production (with HTTPS)
+      sameSite: "None", // Or 'None' if frontend & backend are different origins
       maxAge: 1000 * 60 * 30, // ✅ 2 minutes in milliseconds (not seconds)
     };
     await sendCookie(res, cookieName, token, cookieConfig);
@@ -200,8 +200,8 @@ exports.logoutRecruiter = async (req, res, next) => {
 
    res.clearCookie('accessToken', {
       httpOnly: true,
-      secure: false,
-      sameSite: 'Lax',
+      secure: true,
+      sameSite: 'None',
     });
     return res.status(200).json({
       success: true,

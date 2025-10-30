@@ -1,7 +1,7 @@
 import { s } from "node_modules/framer-motion/dist/types.d-Cjd591yU";
 
 export interface RecruiterType {
-  _id: number;
+  _id: string;
   bio: string;
   profilePhoto: string;
   role: string;
@@ -27,7 +27,7 @@ export interface RecruiterType {
 }
 
 export interface CompanyType {
-  _id: Number;
+  _id: string;
   name: string;
   logo: string;
   verified: false;

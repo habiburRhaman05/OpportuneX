@@ -11,7 +11,7 @@ const useDebounceValue = (input, delay) => {
     return () => {
       clearTimeout(timerId);
     };
-  }, [input]);
+  }, [delay, input]);
 
   return value;
 };

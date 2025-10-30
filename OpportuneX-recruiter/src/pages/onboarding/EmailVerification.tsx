@@ -14,6 +14,7 @@ import { useUser } from "@/context/AuthContext";
 import { queryClientIns } from "@/components/QueryClientWrapper";
 
 export default function EmailVerification() {
+  const navigate = useNavigate();
   // const navigate = useNavigate();
   const [otp, setOtp] = useState("");
   const [expiryTime, setExpiryTime] = useState<number | null>(null); // Unix timestamp in seconds
@@ -85,8 +86,6 @@ export default function EmailVerification() {
   if (recruiter.onboardingSteps.emailVerification) {
     return <Navigate to={"/recruiter/auth/onboarding/company"} replace />;
   }
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (handleEmailVerifyMutation.isSuccess) {

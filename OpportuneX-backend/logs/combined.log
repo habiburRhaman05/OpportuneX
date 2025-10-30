@@ -394,3 +394,4 @@
  2025-10-28 19:30:25 [ERROR]: E11000 duplicate key error collection: job-board.companies index: name_1 dup key: { name: "mycompany" }
  2025-10-28 19:30:28 [ERROR]: E11000 duplicate key error collection: job-board.companies index: name_1 dup key: { name: "mycompany" }
  2025-10-28 19:31:07 [INFO]: Company created: Home Tech
+ 2025-10-29 20:01:41 [INFO]: Company created: BD SOFTWARE ZONE

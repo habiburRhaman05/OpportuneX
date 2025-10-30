@@ -24,8 +24,6 @@ import { useUser } from "@/context/AuthContext";
 import ErrorState from "@/components/company-profile/company-error";
 import AppIntro from "@/components/AppIntro";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
-import PublicCompanyView from "@/components/company-profile/public-view-profile/company-public-view";
-import VerifyPage from "./verify";
 
 interface Candidate {
   _id: string;
@@ -187,10 +185,10 @@ export default function CompanyProfile() {
     return <ErrorState message="Company Profile Not Set" onRetry={() => {}} />;
   }
   if (isLoading) {
-    return <DashboardLayout></DashboardLayout>;
+    return <DashboardLayout>Loading</DashboardLayout>;
   }
 
-  return <VerifyPage />;
+  // return <VerifyPage />;
 
   return (
     <div className="min-h-screen bg-zinc-950">

@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useUser } from "@/context/AuthContext";
 import { useApiQuery } from "@/hooks/useApi";
 import { routes } from "@/lib/clientRoutes";
 import { Briefcase, Building, List, User } from "lucide-react";
@@ -26,6 +27,7 @@ const DashboardPage = () => {
     enabled: true,
     cacheTime: 5,
   });
+  const {recruiter} = useUser()
 
   const dummyData = {
     totalJobs: 0,
@@ -53,7 +55,7 @@ const DashboardPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {error ? dummyData.totalJobs : data?.totalJobs}
+              {error ? dummyData.totalJobs : data?.totalJob}
             </div>
             <p className="text-xs text-muted-foreground">+2 from last week</p>
           </CardContent>
@@ -121,11 +123,11 @@ const DashboardPage = () => {
             ) : (
               <>
                 <div className="text-md font-bold truncate">
-                  {data?.recruiter?.name}
+                  {recruiter.fullName}
                 </div>
 
                 <p className="text-xs text-muted-foreground">
-                  {data?.recruiter?.role}
+                  {recruiter.role}
                 </p>
               </>
             )}

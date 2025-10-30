@@ -30,7 +30,7 @@ const JobDetailsPage = () => {
   const goBack = () => {
     navigate(-1); // 1 step back in history
   };
-  const { refetch, data, isLoading, error } = useApiQuery({
+  const { refetch, data, isLoading, error } = useApiQuery<{ data: any }>({
     url: `/job/${id}/details`,
     queryKey: ["job-details", id],
     enabled: true,

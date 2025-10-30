@@ -36,7 +36,9 @@ const PostedJobsListingPage = () => {
     newParams.set(filterName, value);
     setParams(newParams);
   };
-  const [currentPage, setCurrentPage] = useState(params.get("page") || 1);
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(params.get("page")) || 1
+  );
 
   const { refetch, data, isLoading, error } = useApiQuery<{ data: any }>({
     url: `/job/${recruiter.company._id}/posted-jobs?` + newParams.toString(),
@@ -78,7 +80,7 @@ const PostedJobsListingPage = () => {
 
       <div className="rounded-lg border bg-card ">
         {isLoading ? (
-          <JobListingPageSkelection asChild={true} />
+          <JobListingPageSkelection />
         ) : (
           <JobList data={data?.data} />
         )}
@@ -92,7 +94,6 @@ const PostedJobsListingPage = () => {
               <PaginationItem className="mr-8">
                 <PaginationLink
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
                   className={
                     currentPage === 1
                       ? "pointer-events-none opacity-50"

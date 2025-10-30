@@ -70,7 +70,7 @@ const CompanyProfileEditForm = () => {
   useEffect(() => {
     form.reset(recruiter?.company);
     console.log(form.getValues("size"));
-  }, [recruiter]);
+  }, [recruiter, form]);
 
   const onSubmit = async (data) => {
     // console.log(data);
@@ -85,7 +85,11 @@ const CompanyProfileEditForm = () => {
 
         setPreviewurl(resumtUrl);
       }
-    } catch (error) {}
+    } catch (error) {
+      toast({
+        title: error.name,
+      });
+    }
   };
 
   const handlePhotoSubmit = async () => {

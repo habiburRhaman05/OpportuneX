@@ -11,7 +11,7 @@ const UpdateJobPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const { refetch, data, isLoading, error } = useApiQuery({
+  const { refetch, data, isLoading, error } = useApiQuery<{ data: any }>({
     url: `/job/${id}/details`,
     queryKey: ["job-details", id],
     enabled: true,

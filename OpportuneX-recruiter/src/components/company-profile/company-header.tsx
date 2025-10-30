@@ -26,12 +26,13 @@ export default function CompanyHeader({ company }: { company: Company }) {
               verification process.
             </p>
           </div>
-          <button
+          <Link
+            to={"/recruiter/dashboard/company-profile/verify"}
             // onClick={() => navigate("/verify")}
             className="px-6 py-3 bg-white text-red-600 font-semibold rounded-lg shadow-md hover:bg-gray-200 transition-colors"
           >
             Verify Now
-          </button>
+          </Link>
         </div>
       )}
       <div className="flex flex-col md:flex-row gap-8 items-start md:items-center mb-8">

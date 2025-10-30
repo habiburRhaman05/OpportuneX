@@ -17,7 +17,10 @@ const PostJobPage = () => {
             You cannot post a job - please verify you company EMail
           </h1>{" "}
           <Button>
-            <Link to={"/recruiter/company/verify"} className="underline ">
+            <Link
+              to={"/recruiter/dashboard/company-profile/verify"}
+              className="underline "
+            >
               Verify Now
             </Link>
           </Button>

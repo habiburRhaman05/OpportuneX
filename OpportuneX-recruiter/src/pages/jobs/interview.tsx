@@ -1,20 +1,31 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { DashboardLayout } from "@/components/dashboard/layout";
+
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Send, Plus, X } from "lucide-react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Candidate } from "@/types/candidate";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
 
 // Mock function to get candidates by IDs
 const getMockCandidatesById = (ids: string[]): Candidate[] => {
-  return ids.map(id => ({
+  return ids.map((id) => ({
     id,
     name: `Candidate ${id}`,
     email: `candidate${id}@example.com`,
@@ -26,7 +37,7 @@ const getMockCandidatesById = (ids: string[]): Candidate[] => {
     experience: 5,
     education: "Bachelor's in Computer Science",
     location: "San Francisco, CA",
-    about: "Passionate developer with experience in building web applications."
+    about: "Passionate developer with experience in building web applications.",
   }));
 };
 
@@ -41,17 +52,31 @@ const InterviewPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  
+
   const selectedCandidateIds = location.state?.selectedCandidates || [];
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [questions, setQuestions] = useState<Question[]>([
-    { id: "1", content: "Explain the difference between props and state in React.", type: "text" },
-    { id: "2", content: "Write a function to reverse a linked list.", type: "code" },
-    { id: "3", content: "Design a simple component for a product card.", type: "image" }
+    {
+      id: "1",
+      content: "Explain the difference between props and state in React.",
+      type: "text",
+    },
+    {
+      id: "2",
+      content: "Write a function to reverse a linked list.",
+      type: "code",
+    },
+    {
+      id: "3",
+      content: "Design a simple component for a product card.",
+      type: "image",
+    },
   ]);
   const [newQuestion, setNewQuestion] = useState("");
-  const [newQuestionType, setNewQuestionType] = useState<"text" | "code" | "image">("text");
-  
+  const [newQuestionType, setNewQuestionType] = useState<
+    "text" | "code" | "image"
+  >("text");
+
   useEffect(() => {
     if (selectedCandidateIds.length > 0) {
       // In a real app, fetch candidates from API
@@ -65,30 +90,37 @@ const InterviewPage = () => {
 
   const handleAddQuestion = () => {
     if (newQuestion.trim()) {
-      setQuestions(prev => [...prev, {
-        id: Date.now().toString(),
-        content: newQuestion,
-        type: newQuestionType
-      }]);
+      setQuestions((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          content: newQuestion,
+          type: newQuestionType,
+        },
+      ]);
       setNewQuestion("");
     }
   };
 
   const handleRemoveQuestion = (questionId: string) => {
-    setQuestions(prev => prev.filter(q => q.id !== questionId));
+    setQuestions((prev) => prev.filter((q) => q.id !== questionId));
   };
 
   const handleStartInterview = () => {
     // In a real app, start the interview session via API
     toast({
       title: "Interview prepared!",
-      description: `Interview with ${candidates.length} candidate(s) has been scheduled.`
+      description: `Interview with ${candidates.length} candidate(s) has been scheduled.`,
     });
     navigate(`/jobs/${id}`);
   };
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   };
 
   return (
@@ -121,10 +153,10 @@ const InterviewPage = () => {
                 <div className="space-y-4">
                   {questions.map((question) => (
                     <Card key={question.id} className="relative">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="absolute top-2 right-2 h-8 w-8" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 h-8 w-8"
                         onClick={() => handleRemoveQuestion(question.id)}
                       >
                         <X className="h-4 w-4" />
@@ -142,8 +174,8 @@ const InterviewPage = () => {
                 </div>
               </CardContent>
               <CardFooter className="border-t p-4 flex gap-2">
-                <Input 
-                  placeholder="Type a new question..." 
+                <Input
+                  placeholder="Type a new question..."
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
                   className="flex-1"
@@ -156,22 +188,22 @@ const InterviewPage = () => {
                   </PopoverTrigger>
                   <PopoverContent className="w-56" align="end">
                     <div className="grid gap-1">
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         onClick={() => setNewQuestionType("text")}
                         className="justify-start"
                       >
                         Text
                       </Button>
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         onClick={() => setNewQuestionType("code")}
                         className="justify-start"
                       >
                         Code
                       </Button>
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         onClick={() => setNewQuestionType("image")}
                         className="justify-start"
                       >
@@ -185,7 +217,7 @@ const InterviewPage = () => {
                 </Button>
               </CardFooter>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Interview Notes</CardTitle>
@@ -194,11 +226,14 @@ const InterviewPage = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Textarea placeholder="Type your interview notes here..." className="min-h-[150px]" />
+                <Textarea
+                  placeholder="Type your interview notes here..."
+                  className="min-h-[150px]"
+                />
               </CardContent>
             </Card>
           </div>
-          
+
           <div className="space-y-4">
             <Card>
               <CardHeader>
@@ -209,22 +244,32 @@ const InterviewPage = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {candidates.map(candidate => (
-                    <div key={candidate.id} className="flex items-center space-x-4">
+                  {candidates.map((candidate) => (
+                    <div
+                      key={candidate.id}
+                      className="flex items-center space-x-4"
+                    >
                       <Avatar>
-                        <AvatarImage src={candidate.avatar} alt={candidate.name} />
-                        <AvatarFallback>{getInitials(candidate.name)}</AvatarFallback>
+                        <AvatarImage
+                          src={candidate.avatar}
+                          alt={candidate.name}
+                        />
+                        <AvatarFallback>
+                          {getInitials(candidate.name)}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="font-medium">{candidate.name}</p>
-                        <p className="text-sm text-muted-foreground">{candidate.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {candidate.email}
+                        </p>
                       </div>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
-            
+
             <Button onClick={handleStartInterview} className="w-full">
               <Send className="h-4 w-4 mr-2" /> Schedule Interview
             </Button>
@@ -238,12 +283,22 @@ const InterviewPage = () => {
 export default InterviewPage;
 
 // Missing component so adding it here
-const Badge = ({ children, className, variant }: { children: React.ReactNode, className?: string, variant?: string }) => {
-  const baseClass = "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold";
-  const variantClass = variant === "outline" 
-    ? "border border-primary text-primary" 
-    : "bg-primary text-primary-foreground";
-  
+const Badge = ({
+  children,
+  className,
+  variant,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  variant?: string;
+}) => {
+  const baseClass =
+    "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold";
+  const variantClass =
+    variant === "outline"
+      ? "border border-primary text-primary"
+      : "bg-primary text-primary-foreground";
+
   return (
     <span className={`${baseClass} ${variantClass} ${className || ""}`}>
       {children}

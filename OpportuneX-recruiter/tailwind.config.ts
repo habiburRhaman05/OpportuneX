@@ -1,6 +1,12 @@
 import type { Config } from "tailwindcss";
-
-export default {
+import tailwindcssAnimate from "tailwindcss-animate";
+/**
+ * @file tailwind.config.ts
+ * @description
+ * English: TailwindCSS configuration file with custom colors, animations, and fonts.
+ * Bangla: এই ফাইলটি TailwindCSS-এর কনফিগারেশন, যেখানে কাস্টম রঙ, ফন্ট ও অ্যানিমেশন যোগ করা হয়েছে।
+ */
+const config: Config = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -52,16 +58,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // sidebar: {
-        // 	DEFAULT: 'hsl(var(--sidebar-background))',
-        // 	foreground: 'hsl(var(--sidebar-foreground))',
-        // 	primary: 'hsl(var(--sidebar-primary))',
-        // 	'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-        // 	accent: 'hsl(var(--sidebar-accent))',
-        // 	'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-        // 	border: 'hsl(var(--sidebar-border))',
-        // 	ring: 'hsl(var(--sidebar-ring))'
-        // }
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
@@ -75,50 +71,24 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
         "fade-in": {
-          "0%": {
-            opacity: "0",
-            transform: "translateY(10px)",
-          },
-          "100%": {
-            opacity: "1",
-            transform: "translateY(0)",
-          },
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-out": {
-          "0%": {
-            opacity: "1",
-            transform: "translateY(0)",
-          },
-          "100%": {
-            opacity: "0",
-            transform: "translateY(10px)",
-          },
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(10px)" },
         },
         "slide-in": {
-          "0%": {
-            opacity: "0",
-            transform: "translateX(-10px)",
-          },
-          "100%": {
-            opacity: "1",
-            transform: "translateX(0)",
-          },
+          "0%": { opacity: "0", transform: "translateX(-10px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
         },
       },
       animation: {
@@ -130,5 +100,7 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+  plugins: [tailwindcssAnimate],
+};
+
+export default config;
