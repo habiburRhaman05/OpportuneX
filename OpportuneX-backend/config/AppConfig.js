@@ -23,10 +23,11 @@ exports.appConfig = async (app) => {
   const allowedOrigins = [
     "http://localhost:8080",
     "http://localhost:8081",
-    "http://192.168.0.107:5173",
-    "http://localhost:5173",
+    
+
     "http://localhost:5500",
-    "https://opportune-x-theta.vercel.app"
+    "https://opportune-hub.vercel.app",
+    "https://opportune-hr.vercel.app"
   ];
   const corsOptions = {
     origin: allowedOrigins,
