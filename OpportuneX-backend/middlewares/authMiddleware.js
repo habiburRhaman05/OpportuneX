@@ -7,8 +7,7 @@ exports.authenticatedRoutes = async (req, res, next) => {
   try {
 
     let token =
-        req.cookies?.accessToken 
-        req.header('Authorization')?.replace('Bearer ', '');
+        req.cookies?.accessToken || req.header('Authorization')?.replace('Bearer ', '');
     if (!token) {
       res.status(401).json({
         message: 'Token Not Found',
