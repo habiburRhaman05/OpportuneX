@@ -60,6 +60,11 @@ exports.appConfig = async (app) => {
       }
      })
   })
+  app.get("/api/v1/testing", (req,res)=>{
+     res.json({
+      message:"hello api tester"
+     })
+  })
   app.use(errorHandler);
 
   app.post("/api/v1/upload-file", upload.single("file"), uploadFile);
