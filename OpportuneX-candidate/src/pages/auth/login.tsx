@@ -56,7 +56,7 @@ const CandidateLoginPage = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-700/70 via-indigo-900/80 to-gray-950/90" />
         <div className="relative z-10 space-y-6">
           <h1 className="text-5xl font-extrabold leading-tight drop-shadow-lg">
-            Welcome Back, <br /> Future Candidate 🚀
+            Welcome Back, <br /> Opportune HUB 🚀
           </h1>
           <p className="text-zinc-300 text-lg max-w-lg leading-relaxed">
             Join thousands of professionals finding their dream jobs every day.

@@ -126,10 +126,9 @@ exports.registerCandidate = async (req, res, next) => {
     });
 
     //  const otp = await sendVerificationMail(candidate)
-    // candidate.emailOtp = generateOTP();
-    // candidate.otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
-    // candidate.onboardingSteps.emailVerification = true
-    // await candidate.save();
+    candidate.emailOtp = generateOTP();
+    candidate.otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
+    await candidate.save();
     const { token } = await generateTokens(
       candidate,
       "5m",

@@ -35,6 +35,8 @@ import React from "react";
 import ResetPasswordPage from "./pages/reset-password/reset-password";
 import ForgetPassword from "./pages/forgot-password/forgot-password";
 import CheckToken from "./pages/check-token/check-token";
+import PublicCompanyView from "./pages/public-view-profile/company-public-view";
+import LandingPage from "./pages/landing/landing-page";
 
 const RoutesWrapper = () => {
   return (
@@ -43,12 +45,12 @@ const RoutesWrapper = () => {
         {/* Common Layout Routes */}
 
         <Route path="/" element={<CommonLayout />}>
-          <Route path="/testing" element={<AbortControllerDemo />} />
+          <Route index element={<LandingPage />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:jobId" element={<JobDetailsPage />} />
 
           <Route path="/companies" element={<Companies />} />
-          <Route path="/companies/:name" element={<CompanyDetailsPage />} />
+          <Route path="/companies/:name" element={<PublicCompanyView />} />
         </Route>
 
         {/* Auth Layout Routes */}

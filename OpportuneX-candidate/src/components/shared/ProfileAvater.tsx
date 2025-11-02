@@ -23,11 +23,14 @@ const ProfileAvatar = () => {
       <PopoverTrigger asChild>
         <div
           onClick={togglePopup}
-          className=" flex relative  rounded-md  items-center  overflow-hidden   cursor-pointer transition-transform duration-300 hover:scale-105"
+          className=" flex relative border-2 border-green-500 rounded-full  items-center  overflow-hidden   cursor-pointer transition-transform duration-300 hover:scale-105"
         >
-          <Avatar className="w-10 h-10 object-cover  ">
+          <Avatar className="w-12 h-12 object-cover   ">
             <AvatarImage
-              src={"http://localhost:8080/avatar-placeholder.png"}
+              src={
+                user.data.profilePhoto ||
+                "http://localhost:8080/avatar-placeholder.png"
+              }
               alt={"user?.data"}
             />
             <AvatarFallback className="bg-white/20 text-white">

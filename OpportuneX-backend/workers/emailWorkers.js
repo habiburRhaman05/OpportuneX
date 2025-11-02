@@ -12,19 +12,14 @@ const worker = new Worker(
   
    switch (job.name) {
     case 'welcomeEmail':
-
     await sendVerificationMail(job.data)
     case 'resendOtp':
-
     await resendOtpEmail(job.data)
     case 'forgotPassword':
-
     await sendForgetPasswordLink(job.data)
     default:
       return true
    }
-    
-    
   },
   { connection }
 );
