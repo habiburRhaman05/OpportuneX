@@ -22,6 +22,7 @@ export function OtpStep({ onSuccess, onShowToast }: OtpStepProps) {
     watch,
     formState: { errors },
     reset,
+    trigger,
   } = useForm<OtpValidationFormData>({
     resolver: zodResolver(otpValidationSchema),
   });
@@ -29,10 +30,8 @@ export function OtpStep({ onSuccess, onShowToast }: OtpStepProps) {
   const email = watch("email");
 
   const handleSendOtp = async () => {
-    if (!email) {
-      onShowToast("Please enter your email", "error");
-      return;
-    }
+    const isValid = await trigger("email"); // ✅ manually validate email
+    if (!isValid) return; // stop if invalid email
 
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 1500));

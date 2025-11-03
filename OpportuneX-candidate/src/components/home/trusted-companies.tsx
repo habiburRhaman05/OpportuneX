@@ -146,7 +146,7 @@ export default function TrustedCompanies() {
   }, []);
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 relative">
+    <section className="lg:py-16 py-8  px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-white mb-3 animate-fade-in">

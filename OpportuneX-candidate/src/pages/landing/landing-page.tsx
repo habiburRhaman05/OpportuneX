@@ -21,7 +21,7 @@ export default function LandingPage() {
         <TrustedCompanies />
         <LatestJobs />
         <PopularJobs />
-        <StatsSection />
+        {/* <StatsSection /> */}
         <Testimonials />
         <FAQ />
         <Newsletter />

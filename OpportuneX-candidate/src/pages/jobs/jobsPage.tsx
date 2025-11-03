@@ -19,6 +19,7 @@ import { useApiQuery } from "@/hooks/useApi";
 import { cn } from "@/lib/utils";
 import { FilterIcon, XIcon } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
+import { Job } from "@/types/job.type";
 
 const Jobs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -259,21 +260,17 @@ const Jobs = () => {
               {/* Job listings - Grid View */}
               {jobData?.data?.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {jobData?.data?.map((job, index) => (
-                    <div
-                      key={job.id}
-                      className="border border-gray-100 dark:border-gray-800 rounded-xl p-6 transition-shadow hover:shadow-md h-full"
-                    >
-                      <JobCard
-                        _id={job._id}
-                        title={job.title}
-                        company={job.company}
-                        location={job.location}
-                        type={job.type}
-                        postedAt={job.postedAt}
-                        featured={job.featured}
-                      />
-                    </div>
+                  {jobData?.data?.map((job: Job, index) => (
+                    <JobCard
+                      key={job._id}
+                      _id={job._id}
+                      title={job.title}
+                      company={job.company}
+                      location={job.location}
+                      type={job.type}
+                      postedAt={job.postedAt}
+                      description={job.description}
+                    />
                   ))}
                 </div>
               ) : (

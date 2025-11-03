@@ -1,7 +1,5 @@
-"use client"
-
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
@@ -40,17 +38,21 @@ const faqs = [
     answer:
       "Our support team is available 24/7. You can reach us through live chat, email, or our help center. We're here to help!",
   },
-]
+];
 
 export default function FAQ() {
-  const [expandedId, setExpandedId] = useState<number | null>(null)
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
+    <section className="lg:py-16 py-8 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-white mb-3">Frequently Asked Questions</h2>
-          <p className="text-gray-400">Find answers to common questions about JobPortal</p>
+          <h2 className=" md:text-4xl text-2xl font-bold text-white mb-3">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-gray-400 ">
+            Find answers to common questions about JobPortal
+          </p>
         </div>
 
         <div className="space-y-3">
@@ -60,7 +62,9 @@ export default function FAQ() {
               className="group relative overflow-hidden rounded-xl bg-white/5 backdrop-blur-md border border-white/10 hover:border-blue-400/30 transition-all duration-300"
             >
               <button
-                onClick={() => setExpandedId(expandedId === faq.id ? null : faq.id)}
+                onClick={() =>
+                  setExpandedId(expandedId === faq.id ? null : faq.id)
+                }
                 className="w-full px-6 py-4 flex justify-between items-center text-left hover:bg-white/5 transition"
               >
                 <span className="text-white font-semibold">{faq.question}</span>
@@ -82,5 +86,5 @@ export default function FAQ() {
         </div>
       </div>
     </section>
-  )
+  );
 }

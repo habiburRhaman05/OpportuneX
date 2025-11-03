@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Job } from "@/types/job.type";
+import { Calendar, Eye, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export interface JobCardProps extends Partial<Job> {
@@ -14,68 +15,83 @@ const JobCard = ({
   location,
   type,
   postedAt,
-  featured = false,
+  description,
+  tags = ["react", "javascript", "nodeJs"],
+  appliedDeadLine,
 }: JobCardProps) => {
   return (
-    <div
-      className={`job-card h-full ${
-        featured ? "border-l-4 border-l-shimmer-primary" : ""
-      }`}
-    >
-      <div className="flex items-start gap-4 h-full flex-col">
-        <div className="flex items-start gap-4 w-full">
-          <div className="h-12 w-12 rounded-md bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
-            {company.logo ? (
-              <img
-                src={company.logo}
-                alt={`${company.logo} logo`}
-                className="h-8 w-8"
-              />
-            ) : (
-              <span className="font-bold text-gray-500 text-xs">
-                {company.name.substring(0, 2).toUpperCase()}
-              </span>
-            )}
-          </div>
+    <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/20 via-zinc-900/50 to-transparent border border-blue-400/30 p-6 hover:border-blue-400/60 transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-blue-500/10 animate-fade-in">
+      {/* Badge */}
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-xs px-3 py-1 rounded-full bg-blue-500/30 text-blue-300 border border-blue-400/30">
+          {type}
+        </span>
+        <span className="text-xs px-3 py-1 rounded-full bg-green-500/20 text-green-300 border border-green-400/30">
+          {postedAt || "2 Days Ago"}
+        </span>
+      </div>
 
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-semibold line-clamp-1">{title}</h3>
-              {featured && (
-                <Badge className="bg-shimmer-primary/20 text-shimmer-primary hover:bg-shimmer-primary/30">
-                  Featured
-                </Badge>
-              )}
-            </div>
+      {/* Title and Company */}
+      <div className="mb-2">
+        <h3 className="text-xl font-bold text-white mb-1 group-hover:text-blue-300 transition line-clamp-2">
+          {title}
+        </h3>
+        <p className="text-sm text-gray-400">{company.name}</p>
+      </div>
 
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              {company.name}
-            </p>
-          </div>
-        </div>
+      {/* Description */}
+      <p className="text-gray-400 text-sm mb-4 line-clamp-2">{description}</p>
 
-        <div className="flex flex-wrap gap-2 mb-3">
-          <span className="inline-flex items-center text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-            {location}
+      {/* Tags */}
+      <div className="flex flex-wrap gap-2 mb-2">
+        {tags.slice(0, 3).map((tag) => (
+          <span
+            key={tag}
+            className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-300 border border-blue-400/20"
+          >
+            {tag}
           </span>
-          <span className="inline-flex items-center text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-            {type}
-          </span>
-        </div>
+        ))}
+      </div>
 
-        <div className="flex items-center justify-between w-full mt-auto">
-          <span className="text-xs text-gray-500">{postedAt}</span>
-          {_id ? (
-            <Button variant="outline" className="text-xs h-8" asChild>
-              <Link to={`/jobs/${_id}`}>Apply Now</Link>
-            </Button>
-          ) : (
-            <Button variant="outline" className="text-xs h-8">
-              Apply Now
-            </Button>
-          )}
+      {/* Divider */}
+      <div className="border-t border-white/10  my-3" />
+
+      {/* Location and Salary */}
+      <div className="space-y-2 mb-4">
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-400">Location</span>
+          <span className="text-sm font-semibold text-white">{location}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-400">Salary</span>
+          <span className="text-sm font-semibold text-blue-300">
+            {"Negotiable "}
+          </span>
         </div>
       </div>
+
+      {/* Stats */}
+      <div className="border-t border-white/10 py-4 mb-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-red-500 flex  items-center gap-x-2">
+            <Calendar />
+            DeadLine
+          </span>
+          <span className="font-semibold text-white text-sm">
+            {appliedDeadLine || "12/3/2025"}
+          </span>
+        </div>
+      </div>
+
+      {/* Apply Button */}
+      <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 rounded-lg transition-all group-hover:shadow-lg group-hover:shadow-blue-500/30">
+        <Zap size={16} className="mr-2" />
+        Apply Now
+      </Button>
+
+      {/* Hover effect */}
+      <div className="absolute inset-0 bg-gradient-to-t from-blue-600/0 via-transparent to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none" />
     </div>
   );
 };

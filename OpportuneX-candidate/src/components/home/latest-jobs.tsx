@@ -1,20 +1,13 @@
-import Autoplay from "embla-carousel-autoplay";
 
+import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useState } from "react";
-import {
-  TrendingUp,
-  Eye,
-  MapPin,
-  Briefcase,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { TrendingUp, Eye, MapPin, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SkeletonJobCard } from "../skelections/skeleton-loader";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 
 import "swiper/css";
 import "swiper/css/navigation";
-import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 
 /**
  * 🧠 LatestJobs Section
@@ -94,27 +87,31 @@ export default function LatestJobs() {
   }, []);
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
-      <div className="max-w-7xl mx-auto">
+    <section className="lg:py-16 py-8 px-4 sm:px-6 lg:px-8 relative">
+      <div className="max-w-7xl mx-auto flex flex-col gap-8">
         {/* Header */}
-        <div className="flex justify-between items-end mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
-            <h2 className="text-4xl font-bold text-white mb-3 flex items-center gap-3">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-2 flex items-center gap-3">
               <TrendingUp className="text-blue-400" />
               Latest Opportunities
             </h2>
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-sm sm:text-base">
               Freshly posted positions from top companies
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-6 text-lg">
-            View All
-          </Button>
+
+          {/* Desktop Button */}
+          <div className="hidden sm:block">
+            <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-4 text-base rounded-xl">
+              View All
+            </Button>
+          </div>
         </div>
 
         {/* Slider */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
               <SkeletonJobCard key={i} />
             ))}
@@ -124,28 +121,31 @@ export default function LatestJobs() {
             opts={{
               align: "start",
             }}
-            className="w-full "
+            className="w-full"
             plugins={[
               Autoplay({
-                delay: 2000,
+                delay: 2500,
               }),
             ]}
           >
             <CarouselContent>
               {latestJobs.map((job, index) => (
-                <CarouselItem key={job.id} className="basis-1/3">
+                <CarouselItem
+                  key={job.id}
+                  className="basis-full sm:basis-1/2 lg:basis-1/3"
+                >
                   <div
-                    className="group relative overflow-hidden rounded-xl 
-                  bg-gradient-to-br from-blue-500/20 via-zinc-900/50 to-transparent 
-                  border border-blue-400/30 p-6 hover:border-blue-400/60 
-                  transition-all duration-300 cursor-pointer hover:shadow-xl 
-                  hover:shadow-blue-500/10 animate-fade-in"
+                    className="group relative overflow-hidden rounded-2xl 
+                    bg-gradient-to-br from-blue-500/20 via-zinc-900/50 to-transparent 
+                    border border-blue-400/30 p-6 hover:border-blue-400/60 
+                    transition-all duration-300 cursor-pointer hover:shadow-xl 
+                    hover:shadow-blue-500/10 animate-fade-in backdrop-blur-lg"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div className="pt-4 space-y-6">
+                    <div className="pt-2 space-y-6">
                       {/* Job Info */}
                       <div>
-                        <h3 className="text-xl font-bold text-white mb-1 group-hover:text-blue-300 transition">
+                        <h3 className="text-lg sm:text-xl font-semibold text-white mb-1 group-hover:text-blue-300 transition">
                           {job.title}
                         </h3>
                         <p className="text-sm text-gray-400">{job.company}</p>
@@ -210,6 +210,13 @@ export default function LatestJobs() {
             </CarouselContent>
           </Carousel>
         )}
+
+        {/* Mobile "View All" button */}
+        <div className="block sm:hidden text-center mt-2 mx-auto w-[120px]">
+          <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-4 text-base w-full rounded-xl">
+            View All
+          </Button>
+        </div>
       </div>
     </section>
   );

@@ -1,8 +1,15 @@
+import { useState, useEffect, useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
-import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { SkeletonTestimonial } from "../skelections/skeleton-loader";
-import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
+import { Button } from "../ui/button";
 
 const testimonials = [
   {
@@ -42,56 +49,29 @@ const testimonials = [
     rating: 5,
   },
   {
-    id: 4,
-    name: "David Wilson",
-    role: "Data Analyst",
-    company: "Analytics Corp",
-    image: "👨‍💻",
-    text: "JobPortal's interface is sleek and modern. It makes job hunting feel less stressful and more enjoyable.",
-    rating: 5,
-  },
-  {
-    id: 4,
-    name: "David Wilson",
-    role: "Data Analyst",
-    company: "Analytics Corp",
-    image: "👨‍💻",
-    text: "JobPortal's interface is sleek and modern. It makes job hunting feel less stressful and more enjoyable.",
-    rating: 5,
-  },
-  {
-    id: 4,
-    name: "David Wilson",
-    role: "Data Analyst",
-    company: "Analytics Corp",
-    image: "👨‍💻",
-    text: "JobPortal's interface is sleek and modern. It makes job hunting feel less stressful and more enjoyable.",
-    rating: 5,
-  },
-  {
-    id: 4,
-    name: "David Wilson",
-    role: "Data Analyst",
-    company: "Analytics Corp",
-    image: "👨‍💻",
-    text: "JobPortal's interface is sleek and modern. It makes job hunting feel less stressful and more enjoyable.",
+    id: 5,
+    name: "Aisha Rahman",
+    role: "HR Executive",
+    company: "TalentSphere",
+    image: "👩‍💼",
+    text: "As an HR professional, I love how easy it is to find qualified candidates fast. Highly recommend!",
     rating: 5,
   },
 ];
 
 export default function Testimonials() {
   const [isLoading, setIsLoading] = useState(true);
+  const autoplay = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 700);
+    const timer = setTimeout(() => setIsLoading(false), 700);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-white mb-3 animate-fade-in">
             What Our{" "}
@@ -107,7 +87,7 @@ export default function Testimonials() {
           </p>
         </div>
 
-        {/* Testimonials Carousel */}
+        {/* Carousel */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -116,21 +96,18 @@ export default function Testimonials() {
           </div>
         ) : (
           <Carousel
-            opts={{
-              align: "start",
-            }}
-            className="w-full "
-            plugins={[
-              Autoplay({
-                delay: 2000,
-              }),
-            ]}
+            plugins={[autoplay.current]}
+            className="w-full"
+            opts={{ align: "start", loop: true }}
           >
-            <CarouselContent className="">
-              {testimonials.map((testimonial, index) => (
-                <CarouselItem key={testimonial.id} className="basis-1/3">
+            <CarouselContent>
+              {testimonials.map((testimonial) => (
+                <CarouselItem
+                  key={testimonial.id}
+                  className="basis-full sm:basis-1/2 lg:basis-1/3"
+                >
                   <div className="transition-all duration-500 animate-fade-in">
-                    <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-600/30 to-transparent border border-blue-400/30 p-8 hover:border-blue-400/60 transition-all duration-300 h-full flex flex-col">
+                    <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600/20 via-zinc-900/60 to-transparent backdrop-blur-md border border-blue-400/30 hover:border-blue-400/60 hover:shadow-[0_0_20px_rgba(0,123,255,0.3)] p-8 transition-all duration-300 h-full flex flex-col">
                       {/* Stars */}
                       <div className="flex gap-1 mb-4">
                         {Array.from({ length: testimonial.rating }).map(
@@ -145,7 +122,7 @@ export default function Testimonials() {
                       </div>
 
                       {/* Quote */}
-                      <p className="text-gray-300 mb-6 flex-1 italic">
+                      <p className="text-gray-300 mb-6 flex-1 italic leading-relaxed">
                         "{testimonial.text}"
                       </p>
 
@@ -169,8 +146,24 @@ export default function Testimonials() {
                 </CarouselItem>
               ))}
             </CarouselContent>
+
+            {/* Navigation */}
+            <div className="flex justify-center gap-4 mt-6">
+              <CarouselPrevious className="bg-zinc-800 hover:bg-blue-500/80 text-white rounded-full p-2 transition-all">
+                <ChevronLeft className="h-5 w-5" />
+              </CarouselPrevious>
+              <CarouselNext className="bg-zinc-800 hover:bg-blue-500/80 text-white rounded-full p-2 transition-all">
+                <ChevronRight className="h-5 w-5" />
+              </CarouselNext>
+            </div>
           </Carousel>
         )}
+        {/* Mobile “View All” Button */}
+        <div className="block sm:hidden text-center mt-2 mx-auto w-[160px]">
+          <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-4 text-base w-full rounded-xl">
+            More Testimonials
+          </Button>
+        </div>
       </div>
     </section>
   );

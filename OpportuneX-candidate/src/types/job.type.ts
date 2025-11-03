@@ -8,7 +8,7 @@ export interface Job {
     title: string; // Section title (e.g., "Key Responsibilities")
     list: string[]; // List of responsibilities
   };
-
+  tags: string[];
   status: "open" | "closed"; // Job status
   requirements: {
     education: string; // Required education
