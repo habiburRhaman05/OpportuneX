@@ -11,7 +11,7 @@ import { useFileUpload } from "@/hooks/useFileUplaod";
 import useAuth from "@/hooks/useAuth";
 import { useApiMutation } from "@/hooks/useApi";
 import { useUser } from "@/context/AuthContext";
-import { queryClientIns } from "../shared/QueryClientWrapper";
+import { queryClientIns } from "../QueryClientWrapper";
 
 type UserData = {
   fullName: string;

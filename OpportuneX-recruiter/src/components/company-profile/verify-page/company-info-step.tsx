@@ -49,27 +49,6 @@ export function CompanyInfoStep({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-white font-medium mb-3 text-sm">
-              Company Name *
-            </label>
-            <input
-              type="text"
-              placeholder="Enter your company name"
-              {...register("companyName")}
-              className={`w-full bg-zinc-800 border rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-1 transition-all ${
-                errors.companyName
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                  : "border-zinc-700 focus:border-blue-500 focus:ring-blue-500/20"
-              }`}
-            />
-            {errors.companyName && (
-              <p className="text-red-400 text-sm mt-2">
-                {errors.companyName.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-white font-medium mb-3 text-sm">
               Registration Number *
             </label>
             <input
@@ -88,27 +67,27 @@ export function CompanyInfoStep({
               </p>
             )}
           </div>
-        </div>
 
-        <div>
-          <label className="block text-white font-medium mb-3 text-sm">
-            Official Email *
-          </label>
-          <input
-            type="email"
-            placeholder="contact@company.com"
-            {...register("officialEmail")}
-            className={`w-full bg-zinc-800 border rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-1 transition-all ${
-              errors.officialEmail
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                : "border-zinc-700 focus:border-blue-500 focus:ring-blue-500/20"
-            }`}
-          />
-          {errors.officialEmail && (
-            <p className="text-red-400 text-sm mt-2">
-              {errors.officialEmail.message}
-            </p>
-          )}
+          <div>
+            <label className="block text-white font-medium mb-3 text-sm">
+              Office Address *
+            </label>
+            <input
+              type="text"
+              placeholder="office address"
+              {...register("officeAddress")}
+              className={`w-full bg-zinc-800 border rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-1 transition-all ${
+                errors.officeAddress
+                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                  : "border-zinc-700 focus:border-blue-500 focus:ring-blue-500/20"
+              }`}
+            />
+            {errors.officeAddress && (
+              <p className="text-red-400 text-sm mt-2">
+                {errors.officeAddress.message}
+              </p>
+            )}
+          </div>
         </div>
 
         <div>

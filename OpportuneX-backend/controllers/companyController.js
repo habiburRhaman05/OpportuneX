@@ -1,9 +1,12 @@
 const Company = require("../models/company");
 const Recruiter = require("../models/recruiter");
 const Candidate = require("../models/candidate");
-const searchDBClient = require("../utils/searchDB.js")
-const logger =  require("../utils/logger.js");
+const searchDBClient = require("../utils/searchDB.js");
+const logger = require("../utils/logger.js");
 const { validationResult } = require("express-validator");
+const CompanyVerifyForm = require("../models/company-verify-form.js");
+const { emailQueue } = require("../queue/emailQueue.js");
+
 // import searchDBClient from "../utils/searchDBClient.js"; // Elasticsearch client
 
 // @desc    Create Company
@@ -11,13 +14,21 @@ const { validationResult } = require("express-validator");
 // @access  Private (Recruiter/Admin)
 exports.createCompany = async (req, res, next) => {
   try {
-          const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          return res.status(400).json({ success: false, errors: errors.array() });
-        }
-    const { name, location, description, website ,officialEmail,industry,size} = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+    const {
+      name,
+      location,
+      description,
+      website,
+      officialEmail,
+      industry,
+      size,
+    } = req.body;
 
-      const recruiter = await Recruiter.findOne({ email:req.user.email });
+    const recruiter = await Recruiter.findOne({ email: req.user.email });
     if (!recruiter) {
       return res.status(404).json({
         success: false,
@@ -31,15 +42,15 @@ exports.createCompany = async (req, res, next) => {
       officialEmail,
       description,
       website,
-      createdBy:recruiter._id,industry
-      ,size
+      createdBy: recruiter._id,
+      industry,
+      size,
     });
 
     recruiter.company = company._id;
-    recruiter.onboardingSteps.company = true
+    recruiter.onboardingSteps.company = true;
     await recruiter.save();
     await company.save();
-
 
     // Sync to Elasticsearch
     // await searchDBClient.index({
@@ -88,16 +99,16 @@ exports.searchCompanies = async (req, res, next) => {
     // });
     return res.status(200).json({
       success: true,
-      data:[
+      data: [
         {
-          _id:3244694949,
-          name:"google",
-          location:"america",
+          _id: 3244694949,
+          name: "google",
+          location: "america",
         },
         {
-          _id:32446984949,
-          name:"amazon",
-          location:"india",
+          _id: 32446984949,
+          name: "amazon",
+          location: "india",
         },
       ],
     });
@@ -147,7 +158,9 @@ exports.deleteCompany = async (req, res, next) => {
     const company = await Company.findByIdAndDelete(req.params.id);
 
     if (!company) {
-      return res.status(404).json({ success: false, message: "Company not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Company not found" });
     }
 
     // Remove from Elasticsearch
@@ -166,19 +179,18 @@ exports.deleteCompany = async (req, res, next) => {
   }
 };
 
-
 // @desc    choose existing Company
 // @route   POST /api/v1/companies
 // @access  Private (Recruiter/Admin)
 exports.chooseCompany = async (req, res, next) => {
   try {
-          const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          return res.status(400).json({ success: false, errors: errors.array() });
-        }
-    const { companyId,recuriterEmail} = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+    const { companyId, recuriterEmail } = req.body;
 
-      const recruiter = await Recruiter.findOne({ email:recuriterEmail });
+    const recruiter = await Recruiter.findOne({ email: recuriterEmail });
     if (!recruiter) {
       return res.status(404).json({
         success: false,
@@ -198,13 +210,12 @@ exports.chooseCompany = async (req, res, next) => {
     recruiter.company = company._id;
     company.recruiters.push(recruiter._id);
     recruiter.onboardingSteps = {
-     register:true,
-     emailVerification:true,
-     company:true
-   }
+      register: true,
+      emailVerification: true,
+      company: true,
+    };
     await recruiter.save();
     await company.save();
-
 
     // Sync to Elasticsearch
     await searchDBClient.index({
@@ -236,13 +247,13 @@ exports.chooseCompany = async (req, res, next) => {
 // @access  Private (Recruiter/Admin)
 exports.verifyCompany = async (req, res, next) => {
   try {
-          const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          return res.status(400).json({ success: false, errors: errors.array() });
-        }
-    const { companyId,recuriterEmail,companyEmail} = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+    const { companyEmail, otp, verifyOtp } = req.body;
 
-      const recruiter = await Recruiter.findOne({ email:recuriterEmail });
+    const recruiter = await Recruiter.findOne({ email: recuriterEmail });
     if (!recruiter) {
       return res.status(404).json({
         success: false,
@@ -262,13 +273,12 @@ exports.verifyCompany = async (req, res, next) => {
     recruiter.company = company._id;
     company.recruiters.push(recruiter._id);
     recruiter.onboardingSteps = {
-     register:true,
-     emailVerification:true,
-     company:true
-   }
+      register: true,
+      emailVerification: true,
+      company: true,
+    };
     await recruiter.save();
     await company.save();
-
 
     // Sync to Elasticsearch
     await searchDBClient.index({
@@ -288,6 +298,93 @@ exports.verifyCompany = async (req, res, next) => {
       success: true,
       message: "Company created successfully",
       data: company,
+    });
+  } catch (error) {
+    logger.error(error.message);
+    next(error);
+  }
+};
+
+
+exports.receiveVerifyCompanyForm = async (req, res, next) => {
+  console.log(req.user);
+  
+  try {
+    const { officialEmail,
+      companyId,
+registationNumber,
+companyName,
+tradeNumber,
+mainOfficeAddress,termsAccepted } = req.body;
+  
+const company = await Company.findById(companyId);
+
+  if(!company){
+     return res.status(404).json({
+      success: false,
+      message: "Company Porifle Not Found",
+    });
+  }
+  
+    company.termsAccepted = termsAccepted
+    company.verified = true
+ 
+    await company.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Company Verification Successfully",
+    });
+  } catch (error) {
+    logger.error(error.message);
+    next(error);
+  }
+};
+
+
+exports.otpVerifyCompanyForm = async (req, res, next) => {
+  try {
+
+    const { otp, verifyOtp } = req.body;
+
+    if(otp != verifyOtp){
+ return res.status(400).json({
+      success: false,
+      message: "Invalid OTP",
+    });
+    }
+
+     return res.status(200).json({
+      success: true,
+      message: "Email verified successfully",
+    });
+
+ 
+   
+  } catch (error) {
+    logger.error(error.message);
+    next(error);
+  }
+};
+exports.sendVerifyFormOtp = async (req, res, next) => {
+  try {
+
+    const { otp, companyEmail,otpExpiresAt,companyName } = req.body;
+console.log(companyEmail);
+
+    await emailQueue.add("sent-otp",{email:companyEmail,
+
+emailOtp:otp,
+otpExpiresAt,
+name:companyName
+
+
+    })
+
+
+     return res.status(200).json({
+      success: true,
+      message: " OTP send in your email successfully",
     });
   } catch (error) {
     logger.error(error.message);

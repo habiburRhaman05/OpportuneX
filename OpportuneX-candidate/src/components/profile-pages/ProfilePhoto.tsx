@@ -9,7 +9,7 @@ import { Camera, Loader, Loader2, Upload } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useUser } from "@/context/AuthContext";
-import { queryClientIns } from "../shared/QueryClientWrapper";
+import { queryClientIns } from "../QueryClientWrapper";
 
 const ProfilePhoto = () => {
   const { uploadFile, loading: isUploading } = useFileUpload();

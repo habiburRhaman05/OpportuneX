@@ -356,7 +356,7 @@ exports.resendOtp = async (req, res) => {
 
 
     // Send OTP
-    await emailQueue.add("resendOtp", candidate);
+    await emailQueue.add("sent-otp", candidate);
 
     res.json({ success: true, message: "OTP sent successfully" });
   } catch (err) {

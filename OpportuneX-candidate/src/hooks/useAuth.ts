@@ -3,7 +3,7 @@ import { UseMutationResult } from "@tanstack/react-query";
 import { useContext } from "react";
 import { useApiMutation } from "./useApi";
 import { candidatesRoutes } from "@/api/endpoints/routes";
-import { queryClientIns } from "@/components/shared/QueryClientWrapper";
+import { queryClientIns } from "@/components/QueryClientWrapper";
 
 const useAuth = () => {
   // login mutation

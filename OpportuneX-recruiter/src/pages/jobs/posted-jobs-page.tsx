@@ -41,7 +41,7 @@ const PostedJobsListingPage = () => {
   );
 
   const { refetch, data, isLoading, error } = useApiQuery<{ data: any }>({
-    url: `/job/${recruiter.company._id}/posted-jobs?` + newParams.toString(),
+    url: `/job/${recruiter?.company._id}/posted-jobs?` + newParams.toString(),
     queryKey: ["posted-jobs-data", filters],
     enabled: true,
     refetchOnMount: false,

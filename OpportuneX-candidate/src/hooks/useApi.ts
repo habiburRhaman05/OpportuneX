@@ -3,9 +3,10 @@ import { AxiosError } from "axios";
 import { string, z } from "zod";
 import { createApi } from "@/api/client";
 import http from "@/api/http";
-import { delay } from "@/helper/delay";
+
 import { toast } from "./use-toast";
-import { queryClientIns } from "@/components/shared/QueryClientWrapper";
+import { queryClientIns } from "@/components/QueryClientWrapper";
+
 // axios instance
 
 const api = createApi(http);
@@ -73,8 +74,6 @@ export function useApiMutation<TPayload, TResponse>({
 }: ApiMutationOptions<TPayload, TResponse>) {
   return useMutation<TResponse, AxiosError, TPayload>({
     mutationFn: async (payload?: TPayload | null) => {
-      await delay(1500);
-
       switch (method) {
         case "get":
           return api.get(url);

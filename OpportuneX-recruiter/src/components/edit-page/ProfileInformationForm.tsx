@@ -24,6 +24,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { useUser } from "@/context/AuthContext";
 import { queryClientIns } from "../QueryClientWrapper";
+import { Link } from "react-router-dom";
+import { routes } from "@/lib/clientRoutes";
 
 const ProfileInformationForm = () => {
   const { recruiter, isLoading } = useUser();
@@ -100,6 +102,23 @@ const ProfileInformationForm = () => {
   return (
     <>
       <div className="space-y-6">
+        <div className="mb-8 animate-fade-in-up">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold mb-2">
+              Edit your Recruiter profile
+            </h1>
+            <Link
+              to={routes.profile_page}
+              className="text-blue-600 underline
+            "
+            >
+              View Profile
+            </Link>
+          </div>
+
+          {/* Tabs */}
+        </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <Card>

@@ -395,3 +395,13 @@
  2025-10-28 19:30:28 [ERROR]: E11000 duplicate key error collection: job-board.companies index: name_1 dup key: { name: "mycompany" }
  2025-10-28 19:31:07 [INFO]: Company created: Home Tech
  2025-10-29 20:01:41 [INFO]: Company created: BD SOFTWARE ZONE
+ 2025-11-03 22:40:25 [ERROR]: companyName is not defined
+ 2025-11-03 22:40:28 [ERROR]: companyName is not defined
+ 2025-11-03 22:40:57 [ERROR]: CompanyVerifyForm validation failed: createdBy: Path `createdBy` is required.
+ 2025-11-03 22:40:59 [ERROR]: CompanyVerifyForm validation failed: createdBy: Path `createdBy` is required.
+ 2025-11-03 22:41:40 [ERROR]: Cannot read properties of undefined (reading 'id')
+ 2025-11-03 22:41:43 [ERROR]: Cannot read properties of undefined (reading 'id')
+ 2025-11-03 22:42:18 [ERROR]: Cannot read properties of undefined (reading 'id')
+ 2025-11-03 22:42:21 [ERROR]: Cannot read properties of undefined (reading 'id')
+ 2025-11-03 22:54:58 [INFO]: Company created: dev tech
+ 2025-11-04 21:10:00 [INFO]: Company created: BD SOFTWARE ZONE

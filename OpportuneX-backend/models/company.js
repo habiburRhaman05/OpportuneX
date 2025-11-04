@@ -12,14 +12,6 @@ const companySchema = new mongoose.Schema(
       type: Boolean,
       default:false
     },
-    verified_application_submit: {
-      type: Boolean,
-      default:false
-    },
-    verified_application_expiry: {
-     type: Date,
-   
-    },
     officialEmail: {
       type: String,
       required: true,
@@ -31,6 +23,11 @@ const companySchema = new mongoose.Schema(
       default: null,
     },
     website: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    tradeLicence: {
       type: String,
       default: null,
       trim: true,
@@ -51,6 +48,10 @@ const companySchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
+    },
+    termsAccepted: {
+      type: Boolean,
+      default: false,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

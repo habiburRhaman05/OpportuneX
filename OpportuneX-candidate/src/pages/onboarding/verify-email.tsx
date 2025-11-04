@@ -12,7 +12,7 @@ import useAuth from "@/hooks/useAuth";
 import { Loader, Loader2 } from "lucide-react";
 import axios from "axios";
 import { useUser } from "@/context/AuthContext";
-import { queryClientIns } from "@/components/shared/QueryClientWrapper";
+import { queryClientIns } from "@/components/QueryClientWrapper";
 import AuthLoading from "@/components/skelections/AuthLoader";
 import { UseMutationResult } from "@tanstack/react-query";
 import { useApiMutation } from "@/hooks/useApi";

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Clock, ChevronRight } from "lucide-react";
@@ -6,6 +6,9 @@ import {
   otpValidationSchema,
   type OtpValidationFormData,
 } from "@/lib/validation";
+import { useApiMutation } from "../../../../../OpportuneX-candidate/src/hooks/useApi";
+import { toast } from "@/hooks/use-toast";
+import { useUser } from "@/context/AuthContext";
 
 interface OtpStepProps {
   onSuccess: (email: string) => void;
@@ -14,13 +17,14 @@ interface OtpStepProps {
 
 export function OtpStep({ onSuccess, onShowToast }: OtpStepProps) {
   const [otpSent, setOtpSent] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { recruiter } = useUser();
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
+    getValues,
     reset,
     trigger,
   } = useForm<OtpValidationFormData>({
@@ -28,25 +32,60 @@ export function OtpStep({ onSuccess, onShowToast }: OtpStepProps) {
   });
 
   const email = watch("email");
+  const staticOtp = 111111;
+  const otp = staticOtp || Math.floor(Math.random() * 6);
+  const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+  //  otp send api ref
+  const otpSendMutation = useApiMutation({
+    url: "/company/send-verify-otp",
+    method: "post",
+  });
+  //  verify otp
+  const verifyOtpMutation = useApiMutation({
+    url: "/company/verify-otp",
+    method: "post",
+  });
 
   const handleSendOtp = async () => {
     const isValid = await trigger("email"); // ✅ manually validate email
     if (!isValid) return; // stop if invalid email
 
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    setOtpSent(true);
-    onShowToast("OTP sent successfully to your email", "success");
+    await otpSendMutation.mutateAsync({
+      otp,
+      companyEmail: getValues("email"),
+      otpExpiresAt: otpExpiry,
+      companyName: recruiter.company.name,
+    });
   };
 
   const handleVerifyOtp = async (data: OtpValidationFormData) => {
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    onShowToast("Email verified successfully", "success");
-    onSuccess(data.email);
+    await verifyOtpMutation.mutateAsync({
+      companyEmail: data.email,
+      otp: data.otp,
+      verifyOtp: otp,
+    });
   };
+
+  useEffect(() => {
+    if (otpSendMutation.isSuccess) {
+      setOtpSent(true);
+      toast({
+        title: "OTP sent successfully to your email",
+        variant: "default",
+        className: "bg-green-600 text-white",
+      });
+    }
+
+    if (verifyOtpMutation.isSuccess) {
+      onSuccess(getValues("email"));
+
+      toast({
+        title: "Email verified successfully",
+        variant: "default",
+        className: "bg-green-600 text-white",
+      });
+    }
+  }, [otpSendMutation.isSuccess, verifyOtpMutation.isSuccess]);
 
   return (
     <div className="bg-gradient-to-br from-zinc-900 to-blue-900/20 border border-blue-900/30 rounded-2xl p-10 backdrop-blur-xl shadow-lg">
@@ -91,11 +130,15 @@ export function OtpStep({ onSuccess, onShowToast }: OtpStepProps) {
             <button
               type="button"
               onClick={handleSendOtp}
-              disabled={isLoading}
+              disabled={otpSendMutation.isPending}
               className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
             >
-              {isLoading ? "Sending OTP..." : "Send Verification Code"}
-              {!isLoading && <ChevronRight className="w-5 h-5" />}
+              {otpSendMutation.isPending
+                ? "Sending OTP..."
+                : "Send Verification Code"}
+              {!otpSendMutation.isPending && (
+                <ChevronRight className="w-5 h-5" />
+              )}
             </button>
           </>
         ) : (
@@ -136,11 +179,13 @@ export function OtpStep({ onSuccess, onShowToast }: OtpStepProps) {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={verifyOtpMutation.isPending}
               className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
             >
-              {isLoading ? "Verifying..." : "Verify Code"}
-              {!isLoading && <ChevronRight className="w-5 h-5" />}
+              {verifyOtpMutation.isPending ? "Verifying..." : "Verify Code"}
+              {!verifyOtpMutation.isPending && (
+                <ChevronRight className="w-5 h-5" />
+              )}
             </button>
 
             <button

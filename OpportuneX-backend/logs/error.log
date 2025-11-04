@@ -106,3 +106,11 @@
  2025-10-28 19:09:12 [ERROR]: generateOTP is not defined
  2025-10-28 19:30:25 [ERROR]: E11000 duplicate key error collection: job-board.companies index: name_1 dup key: { name: "mycompany" }
  2025-10-28 19:30:28 [ERROR]: E11000 duplicate key error collection: job-board.companies index: name_1 dup key: { name: "mycompany" }
+ 2025-11-03 22:40:25 [ERROR]: companyName is not defined
+ 2025-11-03 22:40:28 [ERROR]: companyName is not defined
+ 2025-11-03 22:40:57 [ERROR]: CompanyVerifyForm validation failed: createdBy: Path `createdBy` is required.
+ 2025-11-03 22:40:59 [ERROR]: CompanyVerifyForm validation failed: createdBy: Path `createdBy` is required.
+ 2025-11-03 22:41:40 [ERROR]: Cannot read properties of undefined (reading 'id')
+ 2025-11-03 22:41:43 [ERROR]: Cannot read properties of undefined (reading 'id')
+ 2025-11-03 22:42:18 [ERROR]: Cannot read properties of undefined (reading 'id')
+ 2025-11-03 22:42:21 [ERROR]: Cannot read properties of undefined (reading 'id')

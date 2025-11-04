@@ -37,6 +37,7 @@ import CompanyProfile from "./pages/company-profile/company-profile";
 import AuthProtectedRoute from "./components/auth-protected";
 import CompanyEmailVerification from "./pages/verify-company/verify-company-page";
 import VerifyPage from "./pages/company-profile/verify";
+import CompanyEditPage from "./pages/company-profile/edit-page";
 
 const PostedJobsList = React.lazy(
   () => import("@/pages/jobs/posted-jobs-page")
@@ -151,24 +152,32 @@ const App = () => {
           <Route
             path="company-profile/verify"
             element={
-              // <ProtectedRoute>
-              <VerifyPage />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <VerifyPage />
+              </ProtectedRoute>
             }
           />
           <Route
             path="company-profile"
             element={
-              // <ProtectedRoute>
-              <CompanyProfile />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <CompanyProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="company-profile/edit"
+            element={
+              <ProtectedRoute>
+                <CompanyEditPage />
+              </ProtectedRoute>
             }
           />
           <Route
             path="profile/edit"
             element={
               <Suspense fallback={<CompanyProfileSkelection />}>
-                <ProfileEditLayout />
+                <ProfileInformationForm />
               </Suspense>
             }
           >

@@ -1,5 +1,14 @@
-import { CheckCircle2, MapPin, Globe, Mail, Check, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+  CheckCircle2,
+  MapPin,
+  Globe,
+  Mail,
+  Check,
+  X,
+  Edit,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "../ui/button";
 
 interface Company {
   _id: string;
@@ -15,8 +24,18 @@ interface Company {
 }
 
 export default function CompanyHeader({ company }: { company: Company }) {
+  const navigate = useNavigate();
+
   return (
-    <div className="mb-12">
+    <div className="mb-12 relative">
+      <Button
+        className="absolute right-0"
+        onClick={() => {
+          navigate("/recruiter/dashboard/company-profile/edit");
+        }}
+      >
+        Edit Profile <Edit />
+      </Button>
       {!company.verified && (
         <div className="bg-red-600/80 backdrop-blur-md border-l-8 border-red-800 p-6 rounded-lg mb-6 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
           <div>

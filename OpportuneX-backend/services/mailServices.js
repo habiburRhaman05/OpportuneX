@@ -84,8 +84,9 @@ async function sendForgetPasswordLink(user) {
   return token;
 }
 
-async function resendOtpEmail(user) {
+async function sendOtpEmail(user) {
 try {
+  console.log(user);
   
 const mailOptions = {
   from: `OpportuneX <${process.env.FORM_EMAIL}>`,
@@ -95,7 +96,7 @@ const mailOptions = {
   <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px;">
     <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
       
-      <h2 style="color: #0f172a; text-align: center;">Welcome to <span style="color:#2563eb;">OpportuneX</span> 🎉</h2>
+      <h2 style="color: #0f172a; text-align: center;">Welcome to <span style="color:#2563eb;">Opportune Hub</span> 🎉</h2>
       
       <p style="font-size: 15px; color: #334155; line-height: 1.6;">
         Hi <b>${user?.name || "there"}</b>,<br/><br/>
@@ -115,20 +116,20 @@ const mailOptions = {
         </p>
       </div>
 
-      <div style="text-align: center; margin: 30px 0;">
-        <a href="${process.env.CLIENT_URL}/verify-email?email=${encodeURIComponent(user?.email)}" 
-           style="background-color: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 15px;">
-          Verify Email
-        </a>
-      </div>
+      // <div style="text-align: center; margin: 30px 0;">
+      //   <a href="${process.env.CLIENT_URL}/verify-email?email=${encodeURIComponent(user?.email)}" 
+      //      style="background-color: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 15px;">
+      //     Verify Email
+      //   </a>
+      // </div>
 
       <p style="font-size: 13px; color: #64748b; text-align: center;">
-        If you did not create an account with OpportuneX, please ignore this email.
+        If you did not create an account with Opportune Hub, please ignore this email.
       </p>
 
       <hr style="margin: 25px 0; border: none; border-top: 1px solid #e2e8f0;"/>
       <p style="font-size: 12px; color: #94a3b8; text-align: center;">
-        &copy; ${new Date().getFullYear()} OpportuneX. All rights reserved.
+        &copy; ${new Date().getFullYear()} Opportune Hub. All rights reserved.
       </p>
     </div>
   </div>
@@ -149,5 +150,5 @@ const mailOptions = {
 module.exports = {
   sendVerificationMail,
   sendForgetPasswordLink,
-  resendOtpEmail
+  sendOtpEmail
 };

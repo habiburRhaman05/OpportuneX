@@ -13,12 +13,10 @@ export type OtpValidationFormData = z.infer<typeof otpValidationSchema>;
 
 // Step 2: Company Info Schema
 export const companyInfoSchema = z.object({
-  companyName: z.string().min(2, "Company name must be at least 2 characters"),
   registrationNumber: z.string().min(3, "Registration number is required"),
-  officialEmail: z.string().email("Please enter a valid email address"),
   tradeLicense: z.number().positive("Trade license must be a positive number"),
+  officeAddress: z.string().min(5, "You have must be enter the office address"),
 });
-
 export type CompanyInfoFormData = z.infer<typeof companyInfoSchema>;
 
 // Step 3: Terms Acceptance Schema

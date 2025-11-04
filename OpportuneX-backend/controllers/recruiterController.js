@@ -233,7 +233,7 @@ exports.sendOtp = async (req, res, next) => {
     recruiter.otpExpiresAt = new Date(otpExpiry);
     await recruiter.save();
     // Send OTP
-    await emailQueue.add("resendOtp", recruiter);
+    await emailQueue.add("sent-otp", recruiter);
     return res.status(200).json({
       success: true,
       message: "OTP sent in your email successfully",
