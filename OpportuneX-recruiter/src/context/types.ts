@@ -37,4 +37,7 @@ export interface CompanyType {
   size: string;
   location: string;
   description: string;
+  registrationNumber: string;
+  tradeLicense: string;
+  foundedYear: number;
 }

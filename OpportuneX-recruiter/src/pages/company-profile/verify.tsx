@@ -29,13 +29,13 @@ export default function VerifyPage() {
   const [companyInfoData, setCompanyInfoData] = useState<{
     companyName: string;
     registrationNumber: string;
-    tradeLicense: string;
+    tradeNumber: string;
     officeAddress: string;
     officialEmail?: string;
   }>({
     companyName: "",
     registrationNumber: "",
-    tradeLicense: "",
+    tradeNumber: "",
     officeAddress: "",
     officialEmail: "",
   });
@@ -68,7 +68,7 @@ export default function VerifyPage() {
     await submitMutation.mutateAsync({
       companyId: recruiter.company._id,
       registationNumber: companyInfoData.registrationNumber,
-      tradeNumber: companyInfoData.tradeLicense,
+      tradeNumber: companyInfoData.tradeNumber,
       mainOfficeAddress: companyInfoData.officeAddress,
       officialEmail: companyInfoData.officialEmail,
       termsAccepted: true,

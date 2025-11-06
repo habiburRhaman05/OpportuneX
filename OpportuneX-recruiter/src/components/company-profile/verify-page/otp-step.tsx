@@ -33,7 +33,7 @@ export function OtpStep({ onSuccess, onShowToast }: OtpStepProps) {
 
   const email = watch("email");
   const staticOtp = 111111;
-  const otp = staticOtp || Math.floor(Math.random() * 6);
+  const otp = Math.floor(Math.random() * 6);
   const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
   //  otp send api ref
   const otpSendMutation = useApiMutation({

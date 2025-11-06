@@ -4,7 +4,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-export function DashboardLayout({ children }) {
+export function DashboardLayout({ children }: { children?: ReactNode }) {
   const navigate = useNavigate();
   const path = useLocation().pathname;
   useEffect(() => {

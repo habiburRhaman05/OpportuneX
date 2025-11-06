@@ -1,57 +1,78 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+"use client";
+
+import { queryClientIns } from "@/components/QueryClientWrapper";
+import { useUser } from "@/context/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { useApiMutation } from "@/hooks/useApi";
 import {
   professionalInfoSchema,
   type ProfessionalInfoFormData,
 } from "@/lib/company-validation";
-import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
-import { Loader2, CheckCircle } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CheckCircle, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 export function ProfessionalInfoForm() {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const { recruiter } = useUser();
 
+  // ✅ Backend mutation
+  const updateCompanyMutation = useApiMutation({
+    url: "/company/auth/profile/update",
+    method: "put",
+    onSuccess: () => {
+      queryClientIns.invalidateQueries({ queryKey: ["fetch-company-profile"] });
+      toast({
+        title: "✅ Profile Updated",
+        description: "Professional information updated successfully.",
+        className: "bg-green-950 border-green-800 text-green-100",
+      });
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 3000);
+    },
+    onError: () => {
+      toast({
+        title: "❌ Update Failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // ✅ Form setup
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    control,
+    formState: { errors, isDirty },
   } = useForm<ProfessionalInfoFormData>({
     resolver: zodResolver(professionalInfoSchema),
     defaultValues: {
-      registrationNumber: "REG123456",
-      tradeLicense: 9876543210,
-      officialEmail: "contact@acme.com",
-      phone: "+1234567890",
-      address: "123 Business Street",
-      city: "New York",
-      country: "United States",
-      additionalInfo: "Premium member",
+      registrationNumber: recruiter?.company.registrationNumber || "",
+      tradeLicense: recruiter?.company.tradeLicense || "",
+
+      location: recruiter?.company.location || "",
     },
   });
 
   const onSubmit = async (data: ProfessionalInfoFormData) => {
-    setIsSubmitting(true);
-    setIsSuccess(false);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setIsSubmitting(false);
-    setIsSuccess(true);
-
-    toast({
-      title: "Success",
-      description: "Professional information updated successfully!",
-      className: "bg-green-950 border-green-800 text-green-100",
+    await updateCompanyMutation.mutateAsync({
+      ...data,
+      _id: recruiter.company._id,
     });
-
-    setTimeout(() => setIsSuccess(false), 3000);
   };
+
+  const isSubmitting = updateCompanyMutation.isPending;
+
+  useEffect(() => {
+    if (recruiter) {
+    }
+  }, [recruiter]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Registration + Trade License */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Registration Number */}
         <div className="space-y-2">
@@ -78,7 +99,7 @@ export function ProfessionalInfoForm() {
           </label>
           <input
             {...register("tradeLicense")}
-            type="number"
+            type="text"
             className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
             placeholder="1234567890"
           />
@@ -90,115 +111,32 @@ export function ProfessionalInfoForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Official Email */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-zinc-300">
-            Official Email *
-          </label>
-          <input
-            {...register("officialEmail")}
-            type="email"
-            className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
-            placeholder="contact@company.com"
-          />
-          {errors.officialEmail && (
-            <p className="text-xs text-red-400">
-              {errors.officialEmail.message}
-            </p>
-          )}
-        </div>
+      {/* Founded Year + Phone + Address */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Founded Year */}
 
-        {/* Phone */}
+        {/* Address */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-zinc-300">
-            Phone Number *
+            Location *
           </label>
           <input
-            {...register("phone")}
-            type="tel"
-            className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
-            placeholder="+1234567890"
-          />
-          {errors.phone && (
-            <p className="text-xs text-red-400">{errors.phone.message}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* City */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-zinc-300">
-            City *
-          </label>
-          <input
-            {...register("city")}
+            {...register("location")}
             type="text"
             className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
-            placeholder="New York"
+            placeholder="123 Business Street"
           />
-          {errors.city && (
-            <p className="text-xs text-red-400">{errors.city.message}</p>
+          {errors.location && (
+            <p className="text-xs text-red-400">{errors.location.message}</p>
           )}
         </div>
-
-        {/* Country */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-zinc-300">
-            Country *
-          </label>
-          <input
-            {...register("country")}
-            type="text"
-            className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
-            placeholder="United States"
-          />
-          {errors.country && (
-            <p className="text-xs text-red-400">{errors.country.message}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Address */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-zinc-300">
-          Address *
-        </label>
-        <input
-          {...register("address")}
-          type="text"
-          className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
-          placeholder="123 Business Street"
-        />
-        {errors.address && (
-          <p className="text-xs text-red-400">{errors.address.message}</p>
-        )}
-      </div>
-
-      {/* Additional Info */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-zinc-300">
-          Additional Information
-        </label>
-        <textarea
-          {...register("additionalInfo")}
-          rows={3}
-          className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all resize-none"
-          placeholder="Any additional details..."
-        />
-        {errors.additionalInfo && (
-          <p className="text-xs text-red-400">
-            {errors.additionalInfo.message}
-          </p>
-        )}
       </div>
 
       {/* Submit Button */}
       <div className="flex items-center justify-between">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-medium rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all disabled:opacity-50 flex items-center gap-2"
         >
           {isSubmitting ? (

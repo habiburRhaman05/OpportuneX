@@ -4,48 +4,85 @@ import {
   personalInfoSchema,
   type PersonalInfoFormData,
 } from "@/lib/company-validation";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Loader2, CheckCircle } from "lucide-react";
+import { useApiMutation } from "@/hooks/useApi";
+import { queryClientIns } from "@/components/QueryClientWrapper";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useUser } from "@/context/AuthContext";
+
+/**
+ * 🧠 PersonalInfoForm Component
+ *
+ * ✅ Modern Select menu (industry)
+ * ✅ Backend integrated with useApiMutation
+ * ✅ Zod validation with react-hook-form
+ * ✅ Proper toast + loading + success state
+ * ✅ Keeps same layout and styling
+ */
 
 export function PersonalInfoForm() {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<PersonalInfoFormData>({
-    resolver: zodResolver(personalInfoSchema),
-    defaultValues: {
-      companyName: "Acme Corporation",
-      industry: "Technology",
-      foundedYear: 2020,
-      website: "https://acme.com",
-      description: "Leading provider of innovative technology solutions",
+  const { recruiter } = useUser();
+  // ✅ Backend Mutation Hook
+  const updateCompanyMutation = useApiMutation({
+    url: "/company/auth/profile/update",
+    method: "put",
+    onSuccess: (data) => {
+      queryClientIns.invalidateQueries({
+        queryKey: ["fetch-company-profile"],
+      });
+      toast({
+        title: "✅ Profile Updated",
+        description: "Company information updated successfully.",
+        className: "bg-green-950 border-green-800 text-green-100",
+      });
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 3000);
+    },
+    onError: (error) => {
+      toast({
+        title: "❌ Update Failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
+  // ✅ Form setup
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isDirty },
+  } = useForm<PersonalInfoFormData>({
+    resolver: zodResolver(personalInfoSchema),
+    defaultValues: {
+      name: recruiter?.company.name || "",
+      industry: recruiter?.company.industry || "",
+      foundedYear: recruiter?.company.foundedYear || null,
+      website: recruiter?.company.website || "",
+      description: recruiter?.company.description || "",
+    },
+  });
+
+  // ✅ Submit handler
   const onSubmit = async (data: PersonalInfoFormData) => {
-    setIsSubmitting(true);
-    setIsSuccess(false);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setIsSubmitting(false);
-    setIsSuccess(true);
-
-    toast({
-      title: "Success",
-      description: "Personal information updated successfully!",
-      className: "bg-green-950 border-green-800 text-green-100",
+    await updateCompanyMutation.mutateAsync({
+      ...data,
+      _id: recruiter.company._id,
     });
-
-    setTimeout(() => setIsSuccess(false), 3000);
   };
+
+  const isSubmitting = updateCompanyMutation.isPending;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -56,33 +93,41 @@ export function PersonalInfoForm() {
             Company Name *
           </label>
           <input
-            {...register("companyName")}
+            {...register("name")}
             type="text"
             className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
             placeholder="Enter company name"
           />
-          {errors.companyName && (
-            <p className="text-xs text-red-400">{errors.companyName.message}</p>
+          {errors.name && (
+            <p className="text-xs text-red-400">{errors.name.message}</p>
           )}
         </div>
 
-        {/* Industry */}
+        {/* ✅ Modern Industry Select */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-zinc-300">
             Industry *
           </label>
-          <select
-            {...register("industry")}
-            className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
+          <Select
+            value={watch("industry") || recruiter.company.industry || "other"}
+            onValueChange={(value) =>
+              setValue("industry", value, { shouldDirty: true })
+            }
           >
-            <option value="">Select an industry</option>
-            <option value="Technology">Technology</option>
-            <option value="Finance">Finance</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Retail">Retail</option>
-            <option value="Manufacturing">Manufacturing</option>
-            <option value="Other">Other</option>
-          </select>
+            <SelectTrigger className="w-full bg-zinc-900 border border-zinc-800 text-white rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50">
+              <SelectValue placeholder="Select industry" />
+            </SelectTrigger>
+            <SelectContent className="bg-zinc-900 border border-zinc-700 text-white">
+              <SelectItem value="Technology">💻 Technology</SelectItem>
+              <SelectItem value="Finance">💰 Finance</SelectItem>
+              <SelectItem value="Healthcare">🏥 Healthcare</SelectItem>
+              <SelectItem value="Retail">🛍️ Retail</SelectItem>
+              <SelectItem value="Manufacturing">🏭 Manufacturing</SelectItem>
+              <SelectItem value="Education">🎓 Education</SelectItem>
+
+              <SelectItem value="Other">🔹 Other</SelectItem>
+            </SelectContent>
+          </Select>
           {errors.industry && (
             <p className="text-xs text-red-400">{errors.industry.message}</p>
           )}
@@ -143,7 +188,7 @@ export function PersonalInfoForm() {
       <div className="flex items-center justify-between">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-medium rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all disabled:opacity-50 flex items-center gap-2"
         >
           {isSubmitting ? (

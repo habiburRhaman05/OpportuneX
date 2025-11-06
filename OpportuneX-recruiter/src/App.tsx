@@ -3,41 +3,33 @@ import { Route, Routes } from "react-router-dom";
 import AppWrapper from "./AppWrapper";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
-import Register from "./pages/onboarding/Register";
-import EmailVerification from "./pages/onboarding/EmailVerification";
-import CreateCompany from "./pages/onboarding/CreateCompany";
-import StartRecruiting from "./pages/onboarding/welcome";
-import RecruiterLoginDarkModern from "./pages/authentication/login/login-page";
-import DashboardSkelection from "./components/skelections/DashboardSkelection";
-import JobListingPageSkelection from "./components/skelections/JobListingPageSkelection";
-import JobDetailsPageSkelection from "./components/skelections/JobDetailsPageSkelection";
-import ApplicationsListPageSkeelection from "./components/skelections/JobApplicationsListPageSkeelection";
-import CandidateSkelection from "./components/skelections/CandidateCardSkelection";
-import RecruiterProfileSkelection from "./components/skelections/RecruiterProfileSkelection";
-import CompanyProfileSkelection from "./components/skelections/CompanyProfileSkelection";
-import DashboardPage from "./pages/dashboard";
-import CandidateDetailsPage from "./pages/jobs/candidates/[id]";
-import AccountSetting from "./components/Settings";
 import { AccountInfoTab } from "./components/settings/AccountInfoTab";
 import { ChangePasswordTab } from "./components/settings/ChangePasswordTab";
 import { SecuityTab } from "./components/settings/SecurityTab";
+import CompanyProfileSkelection from "./components/skelections/CompanyProfileSkelection";
+import JobDetailsPageSkelection from "./components/skelections/JobDetailsPageSkelection";
+import JobListingPageSkelection from "./components/skelections/JobListingPageSkelection";
+import RecruiterProfileSkelection from "./components/skelections/RecruiterProfileSkelection";
 import AccountSettingLayout from "./pages/accounts/Settings";
-import ProfileInformationForm from "./components/edit-page/ProfileInformationForm";
-import ProfileEditLayout from "./pages/profile/edit";
-import CompanyProfileEditForm from "./components/edit-page/CompanyProfileEditForm";
-import UpdateJobPage from "./pages/jobs/update";
+import DashboardPage from "./pages/dashboard";
+import CandidateDetailsPage from "./pages/jobs/candidates/[id]";
+import EmailVerification from "./pages/onboarding/EmailVerification";
+import StartRecruiting from "./pages/onboarding/welcome";
+
+import AuthProtectedRoute from "./components/auth-protected";
+import OnBoardingGuard from "./components/OnBoardingGuard";
 import UpdateJobPageSkelection from "./components/skelections/UpdateJobPageSkelection";
-import { DashboardLayout } from "./layouts/dashboard-layout";
 import AuthLayout from "./layouts/auth-layout";
+import { DashboardLayout } from "./layouts/dashboard-layout";
 import LoginPage from "./pages/authentication/login/login-page";
 import RegisterPage from "./pages/authentication/register/register-page";
-import CreateCompanyPage from "./pages/onboarding/CreateCompany";
-import OnBoardingGuard from "./components/OnBoardingGuard";
 import CompanyProfile from "./pages/company-profile/company-profile";
-import AuthProtectedRoute from "./components/auth-protected";
-import CompanyEmailVerification from "./pages/verify-company/verify-company-page";
-import VerifyPage from "./pages/company-profile/verify";
 import CompanyEditPage from "./pages/company-profile/edit-page";
+import VerifyPage from "./pages/company-profile/verify";
+import UpdateJobPage from "./pages/jobs/update";
+import CreateCompanyPage from "./pages/onboarding/CreateCompany";
+import CompanyEmailVerification from "./pages/verify-company/verify-company-page";
+import RecruiterProfileEditPage from "./pages/profile/edit/RecruiterProfileEditPage";
 
 const PostedJobsList = React.lazy(
   () => import("@/pages/jobs/posted-jobs-page")
@@ -150,6 +142,14 @@ const App = () => {
             }
           ></Route>
           <Route
+            path="profile/edit"
+            element={
+              <ProtectedRoute>
+                <RecruiterProfileEditPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="company-profile/verify"
             element={
               <ProtectedRoute>
@@ -173,31 +173,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="profile/edit"
-            element={
-              <Suspense fallback={<CompanyProfileSkelection />}>
-                <ProfileInformationForm />
-              </Suspense>
-            }
-          >
-            <Route
-              path="personal"
-              element={
-                <Suspense fallback={<CompanyProfileSkelection />}>
-                  <ProfileInformationForm />
-                </Suspense>
-              }
-            />
-            <Route
-              path="company"
-              element={
-                <Suspense fallback={<CompanyProfileSkelection />}>
-                  <CompanyProfileEditForm />
-                </Suspense>
-              }
-            />
-          </Route>
+
           <Route path="account-settings" element={<AccountSettingLayout />}>
             <Route path="account-info" element={<AccountInfoTab />} />
             <Route path="change-password" element={<ChangePasswordTab />} />

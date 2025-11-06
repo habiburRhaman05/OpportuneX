@@ -32,6 +32,7 @@ http.interceptors.response.use(
   async (error) => {
     // Example: Handle 401 Unauthorized globally
     if (error.response?.status === 401) {
+      // window.location.reload();
       // You could redirect to login or refresh token logic here
       console.warn("Unauthorized: redirecting to login...");
     }

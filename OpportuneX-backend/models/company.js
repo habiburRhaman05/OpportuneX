@@ -27,10 +27,13 @@ const companySchema = new mongoose.Schema(
       default: null,
       trim: true,
     },
-    tradeLicence: {
+    tradeLicense: {
       type: String,
-      default: null,
-      trim: true,
+  
+    },
+    registrationNumber: {
+      type: String,
+
     },
     industry: {
       type: String, // e.g. IT, Finance, Healthcare
@@ -48,6 +51,10 @@ const companySchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
+    },
+    foundedYear: {
+      type: Number,
+
     },
     termsAccepted: {
       type: Boolean,

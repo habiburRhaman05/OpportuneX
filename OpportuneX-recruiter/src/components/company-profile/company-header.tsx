@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
+import CompanyLogo from "./CompanyLogo";
 
 interface Company {
   _id: string;
@@ -55,7 +56,7 @@ export default function CompanyHeader({ company }: { company: Company }) {
         </div>
       )}
       <div className="flex flex-col md:flex-row gap-8 items-start md:items-center mb-8">
-        <div className="relative">
+        {/* <div className="relative">
           <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30 flex items-center justify-center overflow-hidden shadow-lg">
             <img
               src={
@@ -75,7 +76,8 @@ export default function CompanyHeader({ company }: { company: Company }) {
               <X className="w-2 h-2 text-white" />
             </div>
           )}
-        </div>
+        </div> */}
+        <CompanyLogo />
 
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">

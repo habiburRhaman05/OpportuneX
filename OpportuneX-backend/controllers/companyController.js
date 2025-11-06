@@ -124,13 +124,13 @@ exports.searchCompanies = async (req, res, next) => {
 exports.updateCompany = async (req, res, next) => {
   try {
     const updates = req.body;
-    // const company = await Company.findByIdAndUpdate(req.params.id, updates, {
-    //   new: true,
-    // });
+    const company = await Company.findByIdAndUpdate(updates._id, updates, {
+      new: true,
+    });
 
-    // if (!company) {
-    //   return res.status(404).json({ success: false, message: "Company not found" });
-    // }
+    if (!company) {
+      return res.status(404).json({ success: false, message: "Company not found" });
+    }
 
     // // Update Elasticsearch
     // await searchDBClient.update({
@@ -327,6 +327,8 @@ const company = await Company.findById(companyId);
   }
   
     company.termsAccepted = termsAccepted
+    company.tradeLicense = tradeNumber
+    company.registrationNumber = registationNumber
     company.verified = true
  
     await company.save();

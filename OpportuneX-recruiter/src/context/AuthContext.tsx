@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }>({
     url: recruiterRoutes.profile,
     enabled: true,
-    queryKey: ["fetch-profile-data"],
+    queryKey: ["fetch-recruiter-data"],
     cacheTime: 0,
   });
 

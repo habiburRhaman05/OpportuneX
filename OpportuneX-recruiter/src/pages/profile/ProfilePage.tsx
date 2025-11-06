@@ -24,6 +24,7 @@ import { Progress } from "@/components/ui/progress";
 import { useUser } from "@/context/AuthContext";
 import { RecruiterProfileSkeleton } from "@/components/skelections/profile-skelection";
 import { routes } from "@/lib/clientRoutes";
+import ProfilePhoto from "@/components/edit-page/RecruiterProfilePhoto";
 
 // Helper: calculate profile completion %
 function calculateProfileCompletion(user: any) {
@@ -77,15 +78,7 @@ export default function RecruiterProfilePublic() {
       <header className="bg-gradient-primary text-primary-foreground relative">
         <div className="container mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row items-center gap-8">
-            <Avatar className="w-32 h-32 border-4 border-white/20">
-              <AvatarImage
-                src={profilePhoto || "/recruiter-avatar.jpg"}
-                alt={fullName || "Recruiter"}
-              />
-              <AvatarFallback className="bg-white/20 text-white text-4xl">
-                {fullName ? fullName[0] : "R"}
-              </AvatarFallback>
-            </Avatar>
+            <ProfilePhoto />
             <div className="text-center md:text-left">
               <h1 className="text-4xl font-bold mb-2">
                 {fullName || "Name not set"}
