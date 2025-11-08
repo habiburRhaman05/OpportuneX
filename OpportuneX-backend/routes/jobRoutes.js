@@ -1,5 +1,5 @@
 
-const { createJob,updateJob, getJobDetails,getAllJobs ,applyJob, getAllAppledJobs, searchJob, getAllApplication, getJobApplicants, getJobCategories, savedJob, selectApplications, rejectApplications, shortListApplications, getAllCreatedJobs } = require('../controllers/jobController');
+const { createJob,updateJob, getJobDetails,getAllJobs ,applyJob, getAllAppledJobs, searchJob, getAllApplication, getJobApplicants, getJobCategories, savedJob, selectApplications, rejectApplications, shortListApplications, getAllCreatedJobs, deleteJob } = require('../controllers/jobController');
 const express = require('express');
 const { authenticatedRoutes, authorize } = require('../middlewares/authMiddleware');
 
@@ -14,6 +14,7 @@ router.get('/search', searchJob);
 // candidate can access
 router.get('/applied-jobs/:userId', authenticatedRoutes,authorize(['candidate']), getAllAppledJobs);
 router.get('/:jobId/details', getJobDetails);
+router.delete('/:id/delete', deleteJob);
 router.post('/:jobId/apply', applyJob);
 router.post('/:jobId/save',authenticatedRoutes,authorize(['candidate']), savedJob);
 router.put('/:jobId/update', updateJob);

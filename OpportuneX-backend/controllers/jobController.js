@@ -15,7 +15,7 @@ const ErrorHandler = require("../utils/errorHandler.js");
 // Create Job
 exports.createJob = async (req, res, next) => {
   try {
-    // const job = await createJobService(req.body,req.body.postedBy);
+  await createJobService(req.body,req.user.id);
     res.status(201).json({ success: true, message:"your job create successfully"  });
   } catch (err) {
     next(err);
@@ -26,9 +26,10 @@ exports.createJob = async (req, res, next) => {
 exports.getAllJobs = async (req, res, next) => {
   try {
 
-    const filters = req.query
-    console.log(filters);
-    const  jobs = await getJobsService();
+
+    const  jobs = await Job.find().populate("companyId")
+    console.log(jobs);
+    
     res.json({ success: true,totalPages:8, data: jobs ,message:"fetch jobs posts successfully"});
   } catch (err) {
     next(err);
@@ -48,41 +49,8 @@ exports.getJobDetails = async (req, res, next) => {
   try {
     const {jobId} = req.params
     
-    // const job = await getJobDetailsService(id)
-    const job = {
- _id:jobId,
-  title: "Frontend Developer 2",
-  location: "San Francisco, CA",
-  description: "We are looking for a passionate Frontend Developer to join our growing team.",
-  responsibility: {
-    title: "Key Responsibilities",
-    list: [
-      "Develop and maintain user interfaces using React.js",
-      "Collaborate with backend developers and designers",
-      "Optimize components for performance",
-      "Write clean, maintainable, and scalable code"
-    ]
-  },
-  status: "open",
-  requirements: {
-    education: "Bachelor's degree in Computer Science or related field",
-    experience: "2+ years of frontend development experience",
-    skills: [
-      "JavaScript",
-      "React",
-      "HTML",
-      "CSS",
-      "REST APIs"
-    ]
-  },
-  type: "Full-time",
-  company: {
-    name:"google",
-    
-  },
-  postedAt:"Sep 8, 2025",
-  appliedDeadLine:"Dec 8, 2025",
-  }
+    const job = await getJobDetailsService(jobId)
+
   
     res.status(201).json({ success: true, data: job });
   } catch (err) {
@@ -106,6 +74,7 @@ exports.updateJob = async (req, res, next) => {
 exports.deleteJob = async (req, res, next) => {
   try {
     await deleteJobService(req.params.id);
+  
     res.json({ success: true, message: "Job deleted successfully" });
   } catch (err) {
     next(err);
@@ -246,7 +215,7 @@ exports.getAllCreatedJobs = async (req, res, next) => {
      const limit = parseInt(req.query.limit) || 10;
  
      const skip = (page - 1) * limit;
-    const jobs = await Job.find({ company: companyId }).skip(skip)
+    const jobs = await Job.find({ companyId: companyId }).skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
 

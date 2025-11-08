@@ -104,9 +104,9 @@ export default function Hero() {
 
           <div className="hidden md:flex justify-center">
             <img
-              src="/assets/hero-illustration.svg"
+              src="./illustration.png"
               alt="Job Search Illustration"
-              className="max-w-xs sm:max-w-sm lg:max-w-md object-contain"
+              className="max-w-xs sm:max-w-sm lg:max-w-xl object-contain"
             />
           </div>
         </div>

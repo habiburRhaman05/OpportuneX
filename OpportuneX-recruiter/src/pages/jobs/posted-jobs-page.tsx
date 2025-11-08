@@ -40,7 +40,7 @@ const PostedJobsListingPage = () => {
     parseInt(params.get("page")) || 1
   );
 
-  const { refetch, data, isLoading, error } = useApiQuery<{ data: any }>({
+  const { refetch, data, isLoading, error } = useApiQuery<{ jobs: any }>({
     url: `/job/${recruiter?.company._id}/posted-jobs?` + newParams.toString(),
     queryKey: ["posted-jobs-data", filters],
     enabled: true,
@@ -50,7 +50,7 @@ const PostedJobsListingPage = () => {
   });
 
   const per_page = 10;
-  const totalPages = Math.round(data?.data?.length / per_page);
+  const totalPages = Math.round(data?.jobs?.length / per_page);
 
   useEffect(() => {
     const page = params.get("page");
@@ -82,12 +82,12 @@ const PostedJobsListingPage = () => {
         {isLoading ? (
           <JobListingPageSkelection />
         ) : (
-          <JobList data={data?.data} />
+          <JobList data={data?.jobs} />
         )}
       </div>
 
       {/* Pagination */}
-      {data?.data?.length > per_page && (
+      {data?.jobs?.length > per_page && (
         <div className="my-10">
           <Pagination>
             <PaginationContent>

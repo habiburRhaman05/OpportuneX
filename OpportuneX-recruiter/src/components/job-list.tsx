@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { formatDistance } from "date-fns";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useJobStore } from "@/store/useJobStore";
+
 import { routes } from "@/lib/clientRoutes";
 
 interface JobListProps {
@@ -48,11 +48,11 @@ export function JobList({ data }) {
                     className="cursor-pointer hover:text-primary hover:underline"
                     onClick={() => navigate(`/jobs/${job?._id}`)}
                   >
-                    {job?.title}
+                    {job?.jobTitle}
                   </a>
                 </TableCell>
                 <TableCell>{job?.location}</TableCell>
-                <TableCell>{job?.type}</TableCell>
+                <TableCell>{job?.jobType}</TableCell>
                 {/* <TableCell>${job?.salary.toLocaleString()}</TableCell> */}
                 <TableCell>
                   <Badge

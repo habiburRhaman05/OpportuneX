@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const companyEditFormSchema = {};
-export const jobPostingSchema = {};
+
 export const companyFormSchema = {};
 
 // 🧾 createCompanySchema.ts
@@ -48,3 +48,67 @@ export const createCompanySchema = z
       });
     }
   });
+
+//
+
+export const jobPostingSchema = z
+  .object({
+    jobTitle: z.string().min(3, "Job title must be at least 3 characters"),
+    company: z.string().min(2, "Company name is required"),
+    companyId: z.string().min(8, "Company name is required"),
+    location: z.string().min(2, "Location is required"),
+    jobType: z.enum(["Full-time", "Part-time", "Contract", "Remote"], {
+      errorMap: () => ({ message: "Please select a job type" }),
+    }),
+    experience: z.enum(["Entry-level", "Mid-level", "Senior", "Executive"], {
+      errorMap: () => ({ message: "Please select experience level" }),
+    }),
+    salaryType: z.enum(["fixed", "range", "discuss"], {
+      errorMap: () => ({ message: "Please select salary type" }),
+    }),
+    salaryMin: z.number().optional(),
+    salaryMax: z.number().optional(),
+    salaryAmount: z.number().optional(),
+    deadline: z.date({
+      errorMap: () => ({ message: "Application deadline is required" }),
+    }),
+    description: z
+      .string()
+      .min(50, "Description must be at least 50 characters"),
+    responsibilities: z.string().min(20, "Responsibilities are required"),
+    qualifications: z.string().min(20, "Qualifications are required"),
+    benefits: z.array(z.string()).min(1, "Add at least one benefit"),
+    searchTags: z.array(z.string()).min(1, "Add at least one searchTags"),
+  })
+  .refine(
+    (data) => {
+      if (data.salaryType === "range") {
+        return (
+          data.salaryMin && data.salaryMax && data.salaryMin < data.salaryMax
+        );
+      }
+      if (data.salaryType === "fixed") {
+        return !!data.salaryAmount;
+      }
+      return true;
+    },
+    {
+      message: "Please provide valid salary information",
+      path: ["salaryType"],
+    }
+  );
+
+export const availableBenefits = [
+  "Health Insurance",
+  "Dental Insurance",
+  "Vision Insurance",
+  "401(k) Plan",
+  "Stock Options",
+  "Flexible Hours",
+  "Remote Work",
+  "Paid Time Off",
+  "Professional Development",
+  "Gym Membership",
+  "Free Meals",
+  "Bonus Program",
+];

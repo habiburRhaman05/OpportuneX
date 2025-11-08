@@ -1,78 +1,52 @@
 const mongoose = require("mongoose")
+const JobSchema = new mongoose.Schema(
+  {
+    jobTitle: { type: String, required: true, minlength: 3, trim: true },
+    company: { type: String, required: true, minlength: 2, trim: true },
 
-const jobSchema = new mongoose.Schema(
-    {
-    // Unique Job ID
-    _id: {
+    companyId: { type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true },
+
+    location: { type: String, required: true, minlength: 2, trim: true },
+    status: { type: String, default:"panding"},
+    jobType: {
       type: String,
-      required: true,
-      unique: true,
-    },
-
-    // 🏷️ Title & Description
-    title: { type: String, required: true, trim: true },
-    description: { type: String, required: true },
-
-    // 📍 Location
-    location: { type: String, required: true },
-
-    /**
-     * 🧾 Responsibility Section
-     * English: Contains a title and list of key responsibilities.
-     * বাংলা: টাইটেল এবং দায়িত্বের লিস্ট রাখা হয় এখানে।
-     */
-    responsibility: {
-      title: { type: String, default: "Key Responsibilities" },
-      list: [
-        {
-          type: String,
-          required: true,
-        },
-      ],
-    },
-
-    /**
-     * 🧩 Requirements Section
-     * English: Includes education, experience, and skill requirements.
-     * বাংলা: শিক্ষাগত যোগ্যতা, অভিজ্ঞতা এবং স্কিল সংরক্ষণ করা হয়।
-     */
-    requirements: {
-      education: { type: String, required: true },
-      experience: { type: String, required: true },
-      skills: [
-        {
-          type: String,
-          required: true,
-        },
-      ],
-    },
-
-    // 📦 Job Type (Full-time, Part-time, etc.)
-    employment_type: {
-      type: String,
-      enum: ["Full-time", "Part-time", "Remote", "Contract", "Internship"],
-      default: "Full-time",
-    },
-    // ✅ Job Status (open/closed)
-    status: {
-      type: String,
-      enum: ["open", "closed"],
-      default: "open",
-    },
-    company: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Company",
+      enum: ["Full-time", "Part-time", "Contract", "Remote"],
       required: true,
     },
-    // 📅 Dates
-    postedAt: { type: String, required: true },
-    appliedDeadLine: { type: String, required: true },
+    experience: {
+      type: String,
+      enum: ["Entry-level", "Mid-level", "Senior", "Executive"],
+      required: true,
+    },
+    salaryType: {
+      type: String,
+      enum: ["fixed", "range", "discuss"],
+      required: true,
+    },
+    salaryMin: Number,
+    salaryMax: Number,
+    salaryAmount: Number,
+    deadline: { type: Date, required: true },
+    description: { type: String, required: true, minlength: 50 },
+    responsibilities: { type: String, required: true, minlength: 20 },
+    qualifications: { type: String, required: true, minlength: 20 },
+    benefits: {
+      type: [String],
+      required: true,
+      validate: [(v) => v.length > 0, "Add at least one benefit"],
+    },
+    searchTags: {
+      type: [String],
+      required: true,
+      validate: [(v) => v.length > 0, "Add at least one search tag"],
+      index: true,
+    },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Recruiter", required: true },
   },
   { timestamps: true }
 );
 
+JobSchema.index({ title: "text", description: "text",role:"text" }); // Full-text search
 
-jobSchema.index({ title: "text", description: "text",role:"text" }); // Full-text search
-
-const Job = mongoose.model("Job", jobSchema);
+const Job = mongoose.model("Job", JobSchema);
 module.exports = Job

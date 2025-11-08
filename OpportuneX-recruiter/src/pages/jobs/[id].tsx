@@ -71,11 +71,11 @@ const JobDetailsPage = () => {
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">{data?.data?.title}</h1>
+        <h1 className="text-3xl font-bold">{data?.data?.JobTitle}</h1>
         <div className="flex items-center space-x-2 text-sm">
           <span className="text-muted-foreground">{data?.data?.location}</span>
           <span className="text-muted-foreground">•</span>
-          <span className="text-muted-foreground">{data?.data?.type}</span>
+          <span className="text-muted-foreground">{data?.data?.jobType}</span>
           <Badge
             variant={data?.data?.status === "open" ? "default" : "secondary"}
           >
@@ -92,31 +92,19 @@ const JobDetailsPage = () => {
           <p>{data?.data?.description}</p>
 
           <h3 className="text-lg font-semibold mt-4 mb-2">
-            {data?.data?.responsibility.title}
+            {data?.data?.responsibility}
           </h3>
-          <ul className="list-disc pl-5 space-y-1">
-            {data?.data?.responsibility.list.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
 
           <h3 className="text-lg font-semibold mt-4 mb-2">Requirements</h3>
           <p>
-            <strong>Education:</strong> {data?.data?.requirements.education}
+            <strong>Education:</strong> {data?.data?.requirements}
           </p>
           <p>
-            <strong>Experience:</strong> {data?.data?.requirements.experience}
+            <strong>Experience:</strong> {data?.data?.requirements}
           </p>
           <p className="mb-2">
             <strong>Skills:</strong>
           </p>
-          <div className="flex flex-wrap gap-2">
-            {data?.data?.requirements.skills.map((skill, index) => (
-              <Badge key={index} variant="outline">
-                {skill}
-              </Badge>
-            ))}
-          </div>
         </CardContent>
       </Card>
     </div>
